@@ -286,10 +286,10 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
               <MenuItem value={7} >7 inches</MenuItem>
               <MenuItem value={8} >8 inches</MenuItem>
             </Select>
+            <Button className={classes.noPrint} onClick={() => window.print()} variant='contained' color='primary'>
+              Print Labels
+            </Button>
           </FormControl>
-          <Button className={classes.noPrint} onClick={() => window.print()} variant='contained' color='primary'>
-            Print Labels
-        </Button>
         </div>
         {sensor && airtableData && <div className={classes.badgeContainer}>
           {sensor.accountable && <AccountabilityBadge accountable={sensor.accountable} logoSrc={logoSrc} badgeSize={badgeSize} />}

@@ -5,6 +5,7 @@ import { Typography } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { SensorData } from './index'
 import { AirtableData, getAirtableData, Option } from '../../utils/airtable'
+import Button from '@material-ui/core/Button';
 
 import Accordian from './Accordian'
 
@@ -179,19 +180,20 @@ class SensorView extends Component<any, State> {
     let purposeBadgeOption: Option | undefined = undefined
     let techTypeBadgeOption: Option | undefined = undefined
     let accountableBadgeOption: Option | undefined = undefined
-
     if (airtableData) {
       purposeBadgeOption = (purpose && purpose[0] && airtableData.purpose.find((option) => option.name === purpose[0])) || undefined
       techTypeBadgeOption = (techType && techType[0] && airtableData.techType.find((option) => option.name === techType[0])) || undefined
-      accountableBadgeOption = (accountable && airtableData.accountable.find((option) => option.name === accountable)) || undefined
+      accountableBadgeOption = (accountable && airtableData.accountable[0]) || undefined
     }
 
     const hasfooter = phone || chat || email || onsiteStaff
-
     return (
       <div className={classes.root}>
         <div className={classes.header}>
-          {headline && <Typography gutterBottom variant="h4" component="h2" align='center'>{headline}</Typography>}
+          {headline && <Typography gutterBottom variant="h4" component="h2" align='center' style={{ wordBreak: 'break-word' }}>{headline}</Typography>}
+          <Button href={`${window.location.href}/print`} color='primary' variant='outlined'>
+            Try the Sticker Maker
+          </Button>
         </div>
         <Divider variant='fullWidth' />
         <div className={classes.summaryWrapper}>
@@ -205,7 +207,7 @@ class SensorView extends Component<any, State> {
           </div>}
           {accountableBadgeOption && <div className={classes.summaryCell}>
             <img className={classes.summaryBadge} src={logoSrc || accountableBadgeOption.icon}></img>
-            <Typography variant="subtitle2">{accountableBadgeOption.name}</Typography>
+            <Typography variant="subtitle2">{accountable}</Typography>
           </div>}
         </div>
         <Divider variant='fullWidth' />
