@@ -13,7 +13,6 @@ const styles = (theme: Theme) => createStyles({
     flexGrow: 1,
     margin: 'auto',
     paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
     [theme.breakpoints.up('md')]: {
       maxWidth: theme.breakpoints.values.md,
     },
@@ -22,6 +21,11 @@ const styles = (theme: Theme) => createStyles({
     padding: theme.spacing.unit * 3,
   },
   content: {
+    padding: theme.spacing.unit * 3,
+  },
+  footer: {
+    background: theme.palette.grey["200"],
+    marginTop: theme.spacing.unit * 3,
     padding: theme.spacing.unit * 3,
   },
   summaryWrapper: {
@@ -52,7 +56,7 @@ const styles = (theme: Theme) => createStyles({
     maxWidth: '100%',
     maxHeight: '300px',
     margin: 'auto'
-  }
+  },
 });
 
 interface State {
@@ -128,13 +132,9 @@ class SensorView extends Component<any, State> {
           isLoading: false,
         });
 
-        console.log("hi", sensorImageRef)
-        console.log(val)
-
-
         if (sensorImageRef) {
           const storageRef = firebase.storage().ref();
-          storageRef.child(logoRef).getDownloadURL().then((sensorImageSrc) => {
+          storageRef.child(sensorImageRef).getDownloadURL().then((sensorImageSrc) => {
             this.setState({ sensorImageSrc })
           }).catch(function (error) {
             console.log(error)
@@ -185,6 +185,8 @@ class SensorView extends Component<any, State> {
       techTypeBadgeOption = (techType && techType[0] && airtableData.techType.find((option) => option.name === techType[0])) || undefined
       accountableBadgeOption = (accountable && airtableData.accountable.find((option) => option.name === accountable)) || undefined
     }
+
+    const hasfooter = phone || chat || email || onsiteStaff
 
     return (
       <div className={classes.root}>
@@ -243,6 +245,25 @@ class SensorView extends Component<any, State> {
             if (!option) return null;
             return <Accordian key={option.name} icon={option.icon} title={option.name} label='Storage' body={option.description} />
           })}
+        </div>}
+        {hasfooter && <div className={classes.footer}>
+          <Typography gutterBottom variant="h6">Want to know more?</Typography>
+          {email && <div>
+            <Typography variant="subtitle2" inline>Email:</Typography>
+            <Typography gutterBottom variant="body2" inline>&nbsp;{email}</Typography>
+          </div>}
+          {phone && <div>
+            <Typography variant="subtitle2" inline>Call:</Typography>
+            <Typography gutterBottom variant="body2" inline>&nbsp;{phone}</Typography>
+          </div>}
+          {chat && <div>
+            <Typography variant="subtitle2" inline>Chat:</Typography>
+            <Typography gutterBottom variant="body2" inline>&nbsp;{chat}</Typography>
+          </div>}
+          {onsiteStaff && <div>
+            <Typography variant="subtitle2" inline>Visit:</Typography>
+            <Typography gutterBottom variant="body2" inline>Chat with our on-site staff</Typography>
+          </div>}
         </div>}
       </div>
     );
