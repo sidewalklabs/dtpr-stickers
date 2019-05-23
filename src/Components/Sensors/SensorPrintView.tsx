@@ -207,17 +207,6 @@ const QRBadge = withStyles(styles)((props: any) => {
   </div>
 })
 
-const PlainBadge = withStyles(styles)((props: any) => {
-  const { classes, badgeSize } = props
-  const style = badgeSizeToStyle(badgeSize)
-  return <div className={`${classes.badge}`} style={style}>
-    <img className={`${classes.hex}`} src={OUTLINED_HEX_URL} height='100%' width='100%' />
-    <div className={classes.stickerContent}>
-      <Typography className={classes.stickerText}>YOLO</Typography>
-    </div>
-  </div>
-})
-
 interface SensorPrintViewState {
   sensor?: SensorData;
   displayForm: boolean;
@@ -267,7 +256,7 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
 
     try {
       const sensorUrl = `${window.location.origin}/sensors/${sensorId}`
-      const qrcodeSrc = await QRCode.toDataURL(sensorUrl, { errorCorrectionLevel: 'H' })
+      const qrcodeSrc = await QRCode.toDataURL(sensorUrl)
       this.setState({ qrcodeSrc, sensorUrl })
     } catch (err) {
       console.error(err)
@@ -293,6 +282,9 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
               <MenuItem value={3} >3 inches</MenuItem>
               <MenuItem value={4} >4 inches</MenuItem>
               <MenuItem value={5} >5 inches</MenuItem>
+              <MenuItem value={6} >6 inches</MenuItem>
+              <MenuItem value={7} >7 inches</MenuItem>
+              <MenuItem value={8} >8 inches</MenuItem>
             </Select>
           </FormControl>
           <Button className={classes.noPrint} onClick={() => window.print()} variant='contained' color='primary'>

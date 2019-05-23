@@ -373,8 +373,9 @@ class SensorForm extends React.Component<any, State> {
     var userId = currentUser && currentUser.uid;
     if (userId) {
       const sensorId = uuid.v4()
-      const { sensorData, logo } = this.state
+      const { sensorData, logo, sensorImage } = this.state
       let logoRef = null
+      let sensorImageRef = null
 
       if (logo) {
         const fileExtension = logo.name.split('.').pop();
@@ -383,7 +384,14 @@ class SensorForm extends React.Component<any, State> {
         const uploadTask = storageRef.child(logoRef).put(logo);
       }
 
-      firebase.database().ref(`sensors/${sensorId}`).set({ ...sensorData, logoRef, uid: userId });
+      if (sensorImage) {
+        const fileExtension = sensorImage.name.split('.').pop();
+        sensorImageRef = `images/${sensorId}/sensorImage.${fileExtension}`
+        const storageRef = firebase.storage().ref();
+        const uploadTask = storageRef.child(sensorImageRef).put(sensorImage);
+      }
+
+      firebase.database().ref(`sensors/${sensorId}`).set({ ...sensorData, logoRef, sensorImageRef, uid: userId });
 
       if (sensorData.placeId) {
         firebase.database().ref(`places/${sensorData.placeId}/sensors/${sensorId}`).set(sensorData.name || '');
@@ -417,26 +425,18 @@ class SensorForm extends React.Component<any, State> {
                 className={classes.button}
               >
                 Back
-                    </Button>
+              </Button>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={this.handleNext}
+                onClick={() => activeStep === steps.length - 1 ? this.handleSubmit() : this.handleNext()}
                 className={classes.button}
               >
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
               </Button>
             </div>
           </div>
         </div>
-        {activeStep === steps.length && (
-          <Paper square elevation={0} className={classes.resetContainer}>
-            <Typography>All steps completed. Ready to save?</Typography>
-            <Button onClick={() => this.handleSubmit()} className={classes.button}>
-              Submit
-            </Button>
-          </Paper>
-        )}
       </div>
     );
   }

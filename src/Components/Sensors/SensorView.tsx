@@ -128,6 +128,10 @@ class SensorView extends Component<any, State> {
           isLoading: false,
         });
 
+        console.log("hi", sensorImageRef)
+        console.log(val)
+
+
         if (sensorImageRef) {
           const storageRef = firebase.storage().ref();
           storageRef.child(logoRef).getDownloadURL().then((sensorImageSrc) => {
