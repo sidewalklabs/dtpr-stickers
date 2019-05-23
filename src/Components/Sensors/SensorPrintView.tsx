@@ -115,6 +115,8 @@ const styles = (theme: Theme) => createStyles({
   },
   stickerText: {
     minWidth: 0,
+    marginTop: '75%',
+    maxWidth: '70%',
   }
 });
 
@@ -139,8 +141,8 @@ const PurposeBadge = withStyles(styles)((props: PurposeBadgeProps) => {
   const { icon, iconShortname, name } = typeConfig
   return <div className={classes.badge} style={style}>
     <img className={classes.hex} src={`/images/${iconShortname}.svg`} height='100%' width='100%' />
-    <div className={classes.stickerContent}>
-      <Typography className={classes.stickerText}>{name}</Typography>
+    <div className={classes.stickerContent} style={{ color: 'white' }}>
+      <Typography className={classes.stickerText} variant='subtitle2' color='inherit'>{name}</Typography>
     </div>
   </div>
 })
@@ -168,7 +170,7 @@ const PrivacyBadge = withStyles(styles)((props: PrivacyBadgeProps) => {
       return <div key={name} className={classes.badge} style={style}>
         <img className={classes.hex} src={`/images/${iconShortname}.svg`} height='100%' width='100%' />
         <div className={classes.stickerContent}>
-          <Typography className={classes.stickerText}>{name}</Typography>
+          <Typography className={classes.stickerText} variant='subtitle2' >{name}</Typography>
         </div>
       </div>
     })}
@@ -186,7 +188,7 @@ const AccountabilityBadge = withStyles(styles)((props: any) => {
       <div style={{ ...logoWrapperStyle, transition: 'all 0.8s ease-out' }}>
         <img src={logoSrc} height='100%' width='100%' />
       </div>
-      <Typography className={classes.stickerText}>{accountable}</Typography>
+      <Typography variant='subtitle2'>{accountable}</Typography>
     </div>
   </div>
 })
@@ -203,7 +205,7 @@ const QRBadge = withStyles(styles)((props: any) => {
       <div style={{ ...qrWrapperStyle, transition: 'all 0.8s ease-out' }}>
         <img src={qrcodeSrc} height='100%' width='100%' />
       </div>
-      {showURL && url && <Typography className={classes.stickerText} style={{ fontSize: '9px' }} >
+      {showURL && url && <Typography variant='subtitle2' style={{ fontSize: '9px' }} >
         {url}
       </Typography>}
     </div>
