@@ -21,7 +21,7 @@ class LocationPicker extends Component<any, any> {
   }
 
   render() {
-    const { markerLocation } = this.props
+    const { markerLocation, center } = this.props
     return (
       <Map
         style={'mapbox://styles/mapbox/streets-v9'}
@@ -29,6 +29,7 @@ class LocationPicker extends Component<any, any> {
           width: "100%",
           height: "100%",
         }}
+        center={center}
         onClick={(map, evt) => this.onClick(map, evt as any)}
       >
         {markerLocation && <Marker

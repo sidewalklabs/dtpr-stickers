@@ -69,13 +69,18 @@ class PlaceView extends Component<any, any> {
     const { classes } = this.props
     const { placeId } = this.props.match.params
     const { name, lngLat, sensors = {} } = this.state.place
+    const markerLocation = lngLat ? Object.values(lngLat).reverse() : undefined
+
+    // TODO: fix this logic
+    const userHasAccess = !!this.props.uid
     return (
       <div className={classes.root}>
         <Typography gutterBottom variant="h4" component="h2">{name}</Typography>
         <div className={classes.locationPicker}>
           {lngLat && <LocationPicker
             onSelectLocation={(lngLat: MapboxGL.LngLat) => { }}
-            markerLocation={Object.values(lngLat).reverse()}
+            markerLocation={markerLocation}
+            center={markerLocation}
           />}
         </div>
         <Grid container spacing={24}>
@@ -94,7 +99,7 @@ class PlaceView extends Component<any, any> {
               </Grid>
             )
           })}
-          {!this.state.displayForm && <Grid item xs={12}>
+          {userHasAccess && !this.state.displayForm && <Grid item xs={12}>
             <Card className={classes.card}>
               <CardActionArea className={classes.cardActionArea} onClick={() => { this.setState({ displayForm: true }) }}>
                 <CardContent className={classes.addSensorButton}>

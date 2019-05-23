@@ -232,7 +232,7 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
       airtableData: undefined,
       sensorUrl: undefined,
       qrcodeSrc: undefined,
-      badgeSize: 2
+      badgeSize: 3
     };
   }
 
