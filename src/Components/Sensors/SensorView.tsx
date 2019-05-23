@@ -20,6 +20,7 @@ const styles = (theme: Theme) => createStyles({
   },
   header: {
     padding: theme.spacing.unit * 3,
+    textAlign: 'center',
   },
   content: {
     padding: theme.spacing.unit * 3,
@@ -56,7 +57,8 @@ const styles = (theme: Theme) => createStyles({
     width: '100%',
     maxWidth: '100%',
     maxHeight: '300px',
-    margin: 'auto'
+    margin: 'auto',
+    marginBottom: theme.spacing.unit * 2,
   },
 });
 

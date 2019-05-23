@@ -178,11 +178,14 @@ const PrivacyBadge = withStyles(styles)((props: PrivacyBadgeProps) => {
 const AccountabilityBadge = withStyles(styles)((props: any) => {
   const { classes, accountable, logoSrc, badgeSize } = props
   const style = badgeSizeToStyle(badgeSize)
+  const logoWrapperStyle = badgeSizeToStyle(badgeSize / 2.5)
   return <div className={classes.badge} style={style}>
     <img className={`${classes.hex} ${classes.noPrint}`} src={WHITE_HEX_URL} height='100%' width='100%' />
     <img className={`${classes.hex} ${classes.printOnly}`} src={OUTLINED_HEX_URL} height='100%' width='100%' />
     <div className={classes.stickerContent}>
-      {logoSrc && <img src={logoSrc} height='120' width='120' />}
+      <div style={{ ...logoWrapperStyle, transition: 'all 0.8s ease-out' }}>
+        <img src={logoSrc} height='100%' width='100%' />
+      </div>
       <Typography className={classes.stickerText}>{accountable}</Typography>
     </div>
   </div>
@@ -191,7 +194,7 @@ const AccountabilityBadge = withStyles(styles)((props: any) => {
 const QRBadge = withStyles(styles)((props: any) => {
   const { classes, qrcodeSrc, url, badgeSize } = props
   const style = badgeSizeToStyle(badgeSize)
-  const qrWrapperStyle = badgeSizeToStyle(badgeSize / 2)
+  const qrWrapperStyle = badgeSizeToStyle(badgeSize / 2.5)
   const showURL = badgeSize >= 2
   return <div className={classes.badge} style={style}>
     <img className={`${classes.hex} ${classes.noPrint}`} src={WHITE_HEX_URL} height='100%' width='100%' />
@@ -270,7 +273,7 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
       <div className={classes.root}>
         <div className={classes.header}>
           <Typography className={classes.noPrint} gutterBottom variant="h6" component="h2">Print</Typography>
-          <Typography className={classes.noPrint} paragraph>Print this page and cut out the labels for use in your own signage. Or download the images for further layout customization.</Typography>
+          <Typography className={classes.noPrint} paragraph>Print this page and cut out the labels for use in your own signage. Or download the images for further layout customization (coming soon).</Typography>
           <FormControl className={classes.noPrint}>
             <InputLabel htmlFor="select-multiple">Size</InputLabel>
             <Select
