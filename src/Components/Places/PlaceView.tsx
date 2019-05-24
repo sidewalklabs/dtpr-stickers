@@ -4,6 +4,7 @@ import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { Typography } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import SensorForm from '../Sensors/SensorForm'
 
@@ -47,6 +48,7 @@ class PlaceView extends Component<any, any> {
     super(props);
 
     this.state = {
+      isLoading: true,
       place: {},
       displayForm: false,
     };
@@ -59,7 +61,8 @@ class PlaceView extends Component<any, any> {
       if (snapshot) {
         let place = snapshot.val();
         this.setState({
-          place
+          place,
+          isLoading: false,
         });
       }
     });
@@ -68,8 +71,11 @@ class PlaceView extends Component<any, any> {
   render() {
     const { classes } = this.props
     const { placeId } = this.props.match.params
-    const { name, lngLat, sensors = {} } = this.state.place
+    const { isLoading, place } = this.state
+    const { name, lngLat, sensors = {} } = place
     const markerLocation = lngLat ? Object.values(lngLat).reverse() : undefined
+
+    if (isLoading) return <LinearProgress color="secondary" />
 
     // TODO: fix this logic
     const userHasAccess = !!this.props.uid

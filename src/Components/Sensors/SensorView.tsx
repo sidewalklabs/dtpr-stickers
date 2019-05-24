@@ -6,7 +6,7 @@ import Divider from '@material-ui/core/Divider';
 import { SensorData } from './index'
 import { AirtableData, getAirtableData, Option } from '../../utils/airtable'
 import Button from '@material-ui/core/Button';
-
+import LinearProgress from '@material-ui/core/LinearProgress';
 import Accordian from './Accordian'
 
 const styles = (theme: Theme) => createStyles({
@@ -159,6 +159,8 @@ class SensorView extends Component<any, State> {
   render() {
     const { classes } = this.props
     const { isLoading, sensorData, logoSrc, sensorImageSrc, airtableData } = this.state
+
+    if (isLoading) return <LinearProgress color="secondary" />
     if (!sensorData) return null
 
     const {

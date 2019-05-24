@@ -4,6 +4,7 @@ import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { Typography } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -37,6 +38,7 @@ class PlaceList extends Component<any, any> {
     super(props);
 
     this.state = {
+      isLoading: true,
       places: [],
     };
   }
@@ -56,7 +58,8 @@ class PlaceList extends Component<any, any> {
           });
         }
         this.setState({
-          places: newState
+          places: newState,
+          isLoading: false,
         });
       }
     });
@@ -64,6 +67,9 @@ class PlaceList extends Component<any, any> {
 
   render() {
     const { classes } = this.props
+    const { isLoading, places } = this.state
+    if (isLoading) return <LinearProgress color="secondary" />
+
     return (
       <div className={classes.root}>
         <Typography gutterBottom variant="h5" component="h2">My Places Dashboard</Typography>
@@ -80,7 +86,7 @@ class PlaceList extends Component<any, any> {
               </CardActionArea>
             </Card>
           </Grid>
-          {this.state.places.map((place: any) => {
+          {places.map((place: any) => {
             const { id, name } = place
             return (
               <Grid key={id} item xs={12} sm={6} md={4} lg={3}>

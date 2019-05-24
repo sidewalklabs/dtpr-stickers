@@ -6,6 +6,7 @@ import { Typography } from '@material-ui/core';
 import { AirtableData, getAirtableData, Option } from '../../utils/airtable'
 import QRCode from 'qrcode'
 import { SensorData } from './index'
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -68,6 +69,7 @@ const styles = (theme: Theme) => createStyles({
     alignItems: 'center',
     flexWrap: 'wrap',
     '@media print': {
+      background: 'white',
       margin: 0,
       padding: 0,
       width: '100%',
@@ -89,7 +91,6 @@ const styles = (theme: Theme) => createStyles({
 
     '@media print': {
       pageBreakInside: 'avoid',
-      // display: "inline-block",
       float: 'none',
     },
   },
@@ -115,7 +116,6 @@ const styles = (theme: Theme) => createStyles({
   },
   stickerText: {
     minWidth: 0,
-    marginTop: '75%',
     maxWidth: '70%',
   }
 });
@@ -124,57 +124,52 @@ const badgeSizeToStyle = (badgeSize: number) => {
   return { height: badgeSize + 'in', width: badgeSize + 'in' }
 }
 
-interface PurposeBadgeProps {
+interface IconBadgeProps {
   readonly classes?: any;
-  purpose: string[];
   airtableData: AirtableData;
+  airtableKey: 'techType' | 'purpose'
+  badgeName: string;
   badgeSize: number;
 }
 
-const PurposeBadge = withStyles(styles)((props: PurposeBadgeProps) => {
-  const { classes, purpose, airtableData, badgeSize } = props
+const IconBadge = withStyles(styles)((props: IconBadgeProps) => {
+  const { classes, airtableKey, badgeName, airtableData, badgeSize } = props
   const style = badgeSizeToStyle(badgeSize)
-  // Make a badge for anything identifiable or de-indentified
-  const featuredPurpose = purpose[0]
-  const typeConfig = airtableData.purpose.find(option => option.name === featuredPurpose)
-  if (!typeConfig) return null
-  const { icon, iconShortname, name } = typeConfig
-  return <div className={classes.badge} style={style}>
-    <img className={classes.hex} src={`/images/${iconShortname}.svg`} height='100%' width='100%' />
-    <div className={classes.stickerContent} style={{ color: 'white' }}>
+  const iconWrapperStyle = badgeSizeToStyle(badgeSize / 2)
+
+  const config = airtableData[airtableKey].find(option => option.name === badgeName)
+  if (!config) {
+    return null
+  }
+  const { iconShortname, name } = config
+  let hexUrl = WHITE_HEX_URL
+  let iconPath = iconShortname.replace(/\/(?=[^\/]*$)/, '/ic_black/')
+  let fontColor = 'black'
+
+  if (iconShortname.includes('yellow')) {
+    hexUrl = YELLOW_HEX_URL
+    iconPath = iconShortname.replace("/yellow/", "/ic_black/");
+  } else if (iconShortname.includes('blue')) {
+    hexUrl = BLUE_HEX_URL
+    iconPath = iconShortname.replace("/blue/", "/ic_black/");
+  } else if (iconShortname.includes('black')) {
+    // this doesn't happen, but theoretically it could
+    hexUrl = BLACK_HEX_URL
+    iconPath = iconShortname.replace("/black/", "/ic_white/");
+  } else if (airtableKey === 'purpose') {
+    hexUrl = BLACK_HEX_URL
+    iconPath = iconShortname.replace(/\/(?=[^\/]*$)/, '/ic_white/')
+    fontColor = 'white'
+  }
+  return <div key={name} className={classes.badge} style={style}>
+    <img className={classes.hex} src={hexUrl} height='100%' width='100%' />
+    <div className={classes.stickerContent} style={{ color: fontColor }}>
+      <div style={{ ...iconWrapperStyle, transition: 'all 0.8s ease-out' }}>
+        <img src={`/images/${iconPath}.svg`} height='100%' width='100%' />
+      </div>
       <Typography className={classes.stickerText} variant='subtitle2' color='inherit'>{name}</Typography>
     </div>
   </div>
-})
-
-interface PrivacyBadgeProps {
-  readonly classes?: any;
-  techType: string[];
-  airtableData: AirtableData;
-  badgeSize: number;
-}
-
-const PrivacyBadge = withStyles(styles)((props: PrivacyBadgeProps) => {
-  const { classes, techType, airtableData, badgeSize } = props
-  const style = badgeSizeToStyle(badgeSize)
-  // Make a badge for anything identifiable or de-indentified
-  const prioritizedTechType = techType.filter(type => type.includes('dentif'))
-  return <>
-    {prioritizedTechType.map(ptt => {
-      const typeConfig = airtableData.techType.find(option => option.name === ptt)
-      if (!typeConfig) {
-        return null
-      }
-      const { icon, iconShortname, name } = typeConfig
-      const hexUrl = iconShortname.includes('yellow') ? YELLOW_HEX_URL : iconShortname.includes('blue') ? BLUE_HEX_URL : WHITE_HEX_URL
-      return <div key={name} className={classes.badge} style={style}>
-        <img className={classes.hex} src={`/images/${iconShortname}.svg`} height='100%' width='100%' />
-        <div className={classes.stickerContent}>
-          <Typography className={classes.stickerText} variant='subtitle2' >{name}</Typography>
-        </div>
-      </div>
-    })}
-  </>
 })
 
 const AccountabilityBadge = withStyles(styles)((props: any) => {
@@ -213,6 +208,7 @@ const QRBadge = withStyles(styles)((props: any) => {
 })
 
 interface SensorPrintViewState {
+  isLoading: boolean,
   sensor?: SensorData;
   displayForm: boolean;
   airtableData?: AirtableData;
@@ -227,12 +223,13 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
     super(props);
 
     this.state = {
+      isLoading: true,
       sensor: undefined,
       displayForm: false,
       airtableData: undefined,
       sensorUrl: undefined,
       qrcodeSrc: undefined,
-      badgeSize: 3
+      badgeSize: 2
     };
   }
 
@@ -245,7 +242,8 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
       if (snapshot) {
         let sensor = snapshot.val();
         this.setState({
-          sensor
+          sensor,
+          isLoading: false
         });
 
         if (sensor.logoRef) {
@@ -270,7 +268,16 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
 
   render() {
     const { classes } = this.props
-    const { sensor, airtableData, qrcodeSrc, sensorUrl, logoSrc, badgeSize } = this.state
+    const { isLoading, sensor, airtableData, qrcodeSrc, sensorUrl, logoSrc, badgeSize } = this.state
+
+    if (isLoading) return <LinearProgress color="secondary" />
+
+    // Make a badge for anything identifiable or de-indentified
+    const prioritizedTechTypes = sensor ? sensor.techType.filter(type => type.includes('dentif')) : []
+
+    // Make a badge for only the first purpose
+    const featuredPurpose = sensor ? sensor.purpose[0] : undefined
+
     return (
       <div className={classes.root}>
         <div className={classes.header}>
@@ -299,8 +306,10 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
         {sensor && airtableData && <div className={classes.badgeContainer}>
           {sensor.accountable && <AccountabilityBadge accountable={sensor.accountable} logoSrc={logoSrc} badgeSize={badgeSize} />}
           {qrcodeSrc && <QRBadge url={sensorUrl} qrcodeSrc={qrcodeSrc} badgeSize={badgeSize} />}
-          {sensor.techType && sensor.techType.length && <PrivacyBadge techType={sensor.techType} airtableData={airtableData} badgeSize={badgeSize} />}
-          {sensor.purpose && <PurposeBadge purpose={sensor.purpose} airtableData={airtableData} badgeSize={badgeSize} />}
+          {prioritizedTechTypes.length && prioritizedTechTypes.map(techType => (
+            <IconBadge key={techType} airtableKey='techType' badgeName={techType} airtableData={airtableData} badgeSize={badgeSize} />
+          ))}
+          {featuredPurpose && <IconBadge airtableKey='purpose' badgeName={featuredPurpose} airtableData={airtableData} badgeSize={badgeSize} />}
         </div>}
       </div>
     );

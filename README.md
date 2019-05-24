@@ -1,6 +1,7 @@
 ## Running Locally
 
 `yarn` (install dependencies)
+
 `yarn start`
 
 Runs the app in the development mode.<br>
@@ -15,6 +16,7 @@ First make sure you have the firebase cli (https://firebase.google.com/docs/cli/
 
 Then build for production and deploy
 `yarn build`
+
 `firebase deploy`
 
 
