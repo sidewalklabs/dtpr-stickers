@@ -103,78 +103,83 @@ class SensorView extends Component<any, State> {
     const sensorRef = firebase.database().ref(`sensors/${sensorId}`);
     sensorRef.on('value', (snapshot) => {
       if (snapshot) {
-        const val: SensorData = snapshot.val();
-        const {
-          name = '',
-          placeId = '',
-          headline = '',
-          description = '',
-          accountable = '',
-          accountableDescription = '',
-          purpose = [],
-          techType = [],
-          dataType = [],
-          dataProcess = [],
-          access = [],
-          storage = [],
-          phone = '',
-          chat = '',
-          email = '',
-          onsiteStaff = '',
-          logoRef = '',
-          sensorImageRef = ''
-        } = val
-        this.setState({
-          sensorData: {
-            name,
-            placeId,
-            headline,
-            description,
-            accountable,
-            accountableDescription,
-            purpose,
-            techType,
-            dataType,
-            dataProcess,
-            access,
-            storage,
-            phone,
-            chat,
-            email,
-            onsiteStaff,
-            logoRef,
-            sensorImageRef
-          },
-          isLoading: false,
-        });
-
-        if (sensorImageRef) {
-          const storageRef = firebase.storage().ref();
-          storageRef.child(sensorImageRef).getDownloadURL().then((sensorImageSrc) => {
-            this.setState({ sensorImageSrc })
-          }).catch(function (error) {
-            console.log(error)
+        const sensorData: SensorData | null = snapshot.val();
+        if (!sensorData) {
+          this.setState({ isLoading: false })
+        } else {
+          // Some of these fields may not exist for that object, so set a default val
+          const {
+            name = '',
+            placeId = '',
+            headline = '',
+            description = '',
+            accountable = '',
+            accountableDescription = '',
+            purpose = [],
+            techType = [],
+            dataType = [],
+            dataProcess = [],
+            access = [],
+            storage = [],
+            phone = '',
+            chat = '',
+            email = '',
+            onsiteStaff = '',
+            logoRef = '',
+            sensorImageRef = ''
+          } = sensorData
+          this.setState({
+            sensorData: {
+              name,
+              placeId,
+              headline,
+              description,
+              accountable,
+              accountableDescription,
+              purpose,
+              techType,
+              dataType,
+              dataProcess,
+              access,
+              storage,
+              phone,
+              chat,
+              email,
+              onsiteStaff,
+              logoRef,
+              sensorImageRef
+            },
+            isLoading: false,
           });
-        }
 
-        if (logoRef) {
-          const storageRef = firebase.storage().ref();
-          storageRef.child(logoRef).getDownloadURL().then((logoSrc) => {
-            this.setState({ logoSrc })
-          }).catch(function (error) {
-            console.log(error)
-          });
-        }
+          if (sensorImageRef) {
+            const storageRef = firebase.storage().ref();
+            storageRef.child(sensorImageRef).getDownloadURL().then((sensorImageSrc) => {
+              this.setState({ sensorImageSrc })
+            }).catch(function (error) {
+              console.log(error)
+            });
+          }
 
-        if (placeId) {
-          const placeRef = firebase.database().ref(`places/${placeId}`).once('value', (snapshot) => {
-            if (snapshot) {
-              const place: PlaceData | null = snapshot.val();
-              if (place) {
-                this.setState({ parentPlaceName: place.name })
+          if (logoRef) {
+            const storageRef = firebase.storage().ref();
+            storageRef.child(logoRef).getDownloadURL().then((logoSrc) => {
+              this.setState({ logoSrc })
+            }).catch(function (error) {
+              console.log(error)
+            });
+          }
+
+          if (placeId) {
+            const placeRef = firebase.database().ref(`places/${placeId}`).once('value', (snapshot) => {
+              if (snapshot) {
+                const place: PlaceData | null = snapshot.val();
+                if (place) {
+                  this.setState({ parentPlaceName: place.name })
+                }
               }
-            }
-          })
+            })
+          }
         }
       }
     });
@@ -185,7 +190,7 @@ class SensorView extends Component<any, State> {
     const { isLoading, parentPlaceName, sensorData, logoSrc, sensorImageSrc, airtableData } = this.state
 
     if (isLoading) return <LinearProgress color="secondary" />
-    if (!sensorData) return null
+    if (!sensorData) return <Typography>Hmm can't find that sensor :/</Typography>
 
     const {
       placeId,

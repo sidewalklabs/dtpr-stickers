@@ -242,12 +242,13 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
     sensorRef.on('value', (snapshot) => {
       if (snapshot) {
         let sensor = snapshot.val();
+
         this.setState({
           sensor,
           isLoading: false
         });
 
-        if (sensor.logoRef) {
+        if (sensor && sensor.logoRef) {
           const storageRef = firebase.storage().ref();
           storageRef.child(sensor.logoRef).getDownloadURL().then((logoSrc) => {
             this.setState({ logoSrc })
@@ -272,6 +273,7 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
     const { isLoading, sensor, airtableData, qrcodeSrc, sensorUrl, logoSrc, badgeSize } = this.state
 
     if (isLoading) return <LinearProgress color="secondary" />
+    if (!sensor) return <Typography>Hmm can't find that sensor :/</Typography>
 
     // Make a badge for anything identifiable or de-indentified
     const prioritizedTechTypes = (sensor && sensor.techType) ? sensor.techType.filter(type => type.includes('dentif')) : []

@@ -11,7 +11,7 @@ export interface PlaceData {
   placeId: string,
   name: string,
   lngLat: LngLat,
-  sensors: SensorData[]
+  sensors: { [sensorId: string]: boolean }
 }
 
 class Places extends Component<any, any> {

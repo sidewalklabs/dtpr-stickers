@@ -5,7 +5,11 @@ import Grid from '@material-ui/core/Grid';
 import { Typography } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { AirtableData, getAirtableData, Option } from '../../utils/airtable'
 
+import { PlaceData } from '../Places'
+
+import { SensorData } from '../Sensors'
 import SensorForm from '../Sensors/SensorForm'
 
 import LocationPicker from '../LocationPicker';
@@ -29,6 +33,13 @@ const styles = (theme: Theme) => createStyles({
   cardActionArea: {
     minHeight: '50px',
   },
+  cardContent: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  cardIcon: {
+    marginRight: theme.spacing.unit
+  },
   addSensorButton: {
     height: '100%',
     display: 'flex',
@@ -43,65 +54,79 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-class PlaceView extends Component<any, any> {
+interface PlaceViewState {
+  isLoading: boolean,
+  place?: PlaceData,
+  sensorDataList?: { [sensorId: string]: SensorData },
+  airtableData?: AirtableData;
+  displayForm: boolean,
+}
+
+class PlaceView extends Component<any, PlaceViewState> {
   constructor(props: any) {
     super(props);
 
     this.state = {
       isLoading: true,
-      place: {},
+      place: undefined,
+      sensorDataList: undefined,
+      airtableData: undefined,
       displayForm: false,
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { placeId } = this.props.match.params
     const placesRef = firebase.database().ref(`places/${placeId}`);
     placesRef.on('value', (snapshot) => {
       if (snapshot) {
-        let place = snapshot.val() || {};
+        let place: PlaceData | null = snapshot.val() || {};
 
+        if (place) {
+          this.setState({
+            place,
+            isLoading: false,
+          });
+        }
 
-        if (place.sensors) {
+        if (place && place.sensors) {
           const sensorIds = Object.keys(place.sensors);
           const promises = sensorIds.map(
             sensorId => firebase.database().ref(`/sensors/${sensorId}`).once('value')
           );
 
-          let sensorData: any = {};
+          let sensorDataList: { [sensorId: string]: SensorData } = {};
           Promise.all(promises).then(results => {
             results.forEach(result => {
               const id = result.key
-              const sensor = result.val()
+              const sensor: SensorData | null = result.val()
               if (id && sensor) {
-                sensorData[id] = sensor.name
+                sensorDataList[id] = sensor
               }
             });
-            place.sensors = sensorData
             this.setState({
-              place,
-              isLoading: false,
+              sensorDataList
             });
           });
         }
-
-        // allow ui to start rendering place, even if all sensor data promises haven't resolved
-        this.setState({
-          place,
-          isLoading: false,
-        });
       }
     });
+
+    // load airtable data last so screen can render and it feels faster
+    const airtableData = await getAirtableData();
+    this.setState({ airtableData })
   }
 
   render() {
     const { classes } = this.props
     const { placeId } = this.props.match.params
-    const { isLoading, place } = this.state
-    const { name, lngLat, sensors = {} } = place
-    const markerLocation = lngLat ? Object.values(lngLat).reverse() : undefined
+    const { isLoading, place, airtableData, sensorDataList } = this.state
 
     if (isLoading) return <LinearProgress color="secondary" />
+    if (!place) return <Typography>Hmm can't seem to find that place :/</Typography>
+
+    const { name, lngLat = {} } = place
+    const markerLocation = lngLat ? Object.values(lngLat).reverse() : undefined
 
     // TODO: fix this logic
     const userHasAccess = !!this.props.uid
@@ -116,16 +141,23 @@ class PlaceView extends Component<any, any> {
           />}
         </div>
         <Grid container spacing={24}>
-          {Object.keys(sensors).map((id) => {
-            // initially is a bool
-            const sensorName = typeof sensors[id] === 'string' ? sensors[id] : ''
+          {sensorDataList && Object.keys(sensorDataList).map((id) => {
+            const sensor = sensorDataList[id]
+            const { name, purpose } = sensor
+            const featuredPurpose = purpose && purpose.length ? purpose[0] : undefined
+            let icon: string | null = null
+            if (featuredPurpose && airtableData) {
+              const config = airtableData.purpose.find((option) => option.name === featuredPurpose)
+              if (config) icon = `/images/${config.iconShortname}.svg`
+            }
             return (
               <Grid key={id} item xs={12}>
                 <Card className={classes.card}>
                   <CardActionArea className={classes.cardActionArea} href={`/sensors/${id}`}>
-                    <CardContent>
-                      <Typography gutterBottom variant="subtitle1" component="h2">
-                        {sensorName}
+                    <CardContent className={classes.cardContent}>
+                      {icon && <img className={classes.cardIcon} src={icon} />}
+                      <Typography variant="subtitle1" component="h2">
+                        {name}
                       </Typography>
                     </CardContent>
                   </CardActionArea>
