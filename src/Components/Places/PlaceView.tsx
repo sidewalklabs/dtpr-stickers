@@ -59,7 +59,33 @@ class PlaceView extends Component<any, any> {
     const placesRef = firebase.database().ref(`places/${placeId}`);
     placesRef.on('value', (snapshot) => {
       if (snapshot) {
-        let place = snapshot.val();
+        let place = snapshot.val() || {};
+
+
+        if (place.sensors) {
+          const sensorIds = Object.keys(place.sensors);
+          const promises = sensorIds.map(
+            sensorId => firebase.database().ref(`/sensors/${sensorId}`).once('value')
+          );
+
+          let sensorData: any = {};
+          Promise.all(promises).then(results => {
+            results.forEach(result => {
+              const id = result.key
+              const sensor = result.val()
+              if (id && sensor) {
+                sensorData[id] = sensor.name
+              }
+            });
+            place.sensors = sensorData
+            this.setState({
+              place,
+              isLoading: false,
+            });
+          });
+        }
+
+        // allow ui to start rendering place, even if all sensor data promises haven't resolved
         this.setState({
           place,
           isLoading: false,
@@ -91,13 +117,15 @@ class PlaceView extends Component<any, any> {
         </div>
         <Grid container spacing={24}>
           {Object.keys(sensors).map((id) => {
+            // initially is a bool
+            const sensorName = typeof sensors[id] === 'string' ? sensors[id] : ''
             return (
               <Grid key={id} item xs={12}>
                 <Card className={classes.card}>
                   <CardActionArea className={classes.cardActionArea} href={`/sensors/${id}`}>
                     <CardContent>
                       <Typography gutterBottom variant="subtitle1" component="h2">
-                        {sensors[id]}
+                        {sensorName}
                       </Typography>
                     </CardContent>
                   </CardActionArea>

@@ -45,21 +45,31 @@ class PlaceList extends Component<any, any> {
 
   componentDidMount() {
     const { uid } = this.props
-
     const placesRef = firebase.database().ref(`/users/${uid}/places`);
     placesRef.on('value', (snapshot) => {
       if (snapshot) {
-        let places = snapshot.val();
-        let newState = [];
-        for (let placeId in places) {
-          newState.push({
-            id: placeId,
-            name: places[placeId],
+        const places = snapshot.val() || {};
+        const placeIds = Object.keys(places);
+        const promises = placeIds.map(
+          placeId => firebase.database().ref(`/places/${placeId}`).once('value')
+        );
+
+        let newState: Array<any> = [];
+        Promise.all(promises).then(results => {
+          results.forEach(result => {
+            const id = result.key
+            const place = result.val()
+            if (place) {
+              newState.push({
+                id,
+                name: place.name,
+              });
+            }
           });
-        }
-        this.setState({
-          places: newState,
-          isLoading: false,
+          this.setState({
+            places: newState,
+            isLoading: false,
+          });
         });
       }
     });

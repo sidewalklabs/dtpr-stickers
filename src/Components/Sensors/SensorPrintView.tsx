@@ -153,10 +153,11 @@ const IconBadge = withStyles(styles)((props: IconBadgeProps) => {
     hexUrl = BLUE_HEX_URL
     iconPath = iconShortname.replace("/blue/", "/ic_black/");
   } else if (iconShortname.includes('black')) {
-    // this doesn't happen, but theoretically it could
     hexUrl = BLACK_HEX_URL
-    iconPath = iconShortname.replace("/black/", "/ic_white/");
+    iconPath = iconShortname.replace("/black/", "/ic_white/")
+    fontColor = 'white'
   } else if (airtableKey === 'purpose') {
+    // the name is inconsistent so we explitcly check for the purpose case :/
     hexUrl = BLACK_HEX_URL
     iconPath = iconShortname.replace(/\/(?=[^\/]*$)/, '/ic_white/')
     fontColor = 'white'
@@ -273,7 +274,7 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
     if (isLoading) return <LinearProgress color="secondary" />
 
     // Make a badge for anything identifiable or de-indentified
-    const prioritizedTechTypes = sensor ? sensor.techType.filter(type => type.includes('dentif')) : []
+    const prioritizedTechTypes = (sensor && sensor.techType) ? sensor.techType.filter(type => type.includes('dentif')) : []
 
     // Make a badge for only the first purpose
     const featuredPurpose = sensor ? sensor.purpose[0] : undefined
@@ -304,9 +305,9 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
           </FormControl>
         </div>
         {sensor && airtableData && <div className={classes.badgeContainer}>
-          {sensor.accountable && <AccountabilityBadge accountable={sensor.accountable} logoSrc={logoSrc} badgeSize={badgeSize} />}
+          {logoSrc && sensor.accountable && <AccountabilityBadge accountable={sensor.accountable} logoSrc={logoSrc} badgeSize={badgeSize} />}
           {qrcodeSrc && <QRBadge url={sensorUrl} qrcodeSrc={qrcodeSrc} badgeSize={badgeSize} />}
-          {prioritizedTechTypes.length && prioritizedTechTypes.map(techType => (
+          {!!prioritizedTechTypes.length && prioritizedTechTypes.map(techType => (
             <IconBadge key={techType} airtableKey='techType' badgeName={techType} airtableData={airtableData} badgeSize={badgeSize} />
           ))}
           {featuredPurpose && <IconBadge airtableKey='purpose' badgeName={featuredPurpose} airtableData={airtableData} badgeSize={badgeSize} />}

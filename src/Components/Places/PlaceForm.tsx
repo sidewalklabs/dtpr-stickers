@@ -1,5 +1,5 @@
 import React from 'react';
-import uuid from "uuid";
+import shortid from "shortid";
 import Button from '@material-ui/core/Button';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -39,7 +39,7 @@ class PlaceForm extends React.Component<any, any> {
         }
       });
     } else {
-      this.setState({ id: uuid.v4(), uid, loading: false })
+      this.setState({ id: shortid.generate(), uid, loading: false })
     }
   }
 
@@ -53,11 +53,18 @@ class PlaceForm extends React.Component<any, any> {
     const { uid } = this.props
     if (uid) {
       const { id, name, lngLat, sensors } = this.state
-      firebase.database().ref(`places/${id}`).set({
-        name, lngLat, sensors
+      const newPlaceData = { name, lngLat, sensors }
+      const updates: { [key: string]: any } = {};
+      updates['/places/' + id] = newPlaceData;
+      updates[`users/${uid}/places/${id}`] = true;
+      firebase.database().ref().update(updates, (error) => {
+        if (error) {
+          console.error(error)
+          this.props.history.push(`/places/${id}`)
+        } else {
+          this.props.history.push(`/places/${id}`)
+        }
       });
-      firebase.database().ref(`users/${uid}/places/${id}`).set(name);
-      this.props.history.push(`/places/${id}`)
     } else {
       console.log("Unable to save. User not logged in")
     }

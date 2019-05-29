@@ -2,13 +2,12 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import uuid from "uuid";
+import shortid from "shortid";
 import MenuItem from '@material-ui/core/MenuItem';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
@@ -45,7 +44,7 @@ class SensorForm extends React.Component<any, State> {
     this.state = {
       activeStep: 0,
       logoPreviewSrc: undefined,
-      sensorId: uuid.v4(),
+      sensorId: shortid.generate(),
       logoUploadProgress: 101,
       sensorImageUploadProgress: 101,
       sensorData: {
@@ -396,12 +395,20 @@ class SensorForm extends React.Component<any, State> {
     var userId = currentUser && currentUser.uid;
     if (userId) {
       const { sensorId, sensorData } = this.state
-
-      firebase.database().ref(`sensors/${sensorId}`).set({ ...sensorData, uid: userId });
-
+      const newSensorData = { ...sensorData, uid: userId }
+      const updates: { [key: string]: any } = {};
+      updates['/sensors/' + sensorId] = newSensorData;
       if (sensorData.placeId) {
-        firebase.database().ref(`places/${sensorData.placeId}/sensors/${sensorId}`).set(sensorData.name || '');
+        updates[`places/${sensorData.placeId}/sensors/${sensorId}`] = true;
       }
+      firebase.database().ref().update(updates, (error) => {
+        if (error) {
+          console.error(error)
+          this.props.history.push(`/sensors/${sensorId}`)
+        } else {
+          this.props.history.push(`/sensors/${sensorId}`)
+        }
+      });
       this.props.history.push(`/sensors/${sensorId}`)
     } else {
       console.log("Unable to save. User not logged in")
