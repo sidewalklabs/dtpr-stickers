@@ -23,6 +23,11 @@ const theme = createMuiTheme({
   },
   typography: {
     useNextVariants: true,
+    fontFamily: [
+      'Google Sans',
+      'Roboto',
+      '-apple-system',
+    ].join(','),
   },
 });
 
