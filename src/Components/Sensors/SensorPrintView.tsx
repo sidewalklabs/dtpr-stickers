@@ -259,7 +259,7 @@ class SensorPrintView extends Component<any, SensorPrintViewState> {
     });
 
     try {
-      const sensorUrl = `${window.location.origin}/sensors/${sensorId}`
+      const sensorUrl = `${window.location.origin}/${sensorId}`
       const qrcodeSrc = await QRCode.toDataURL(sensorUrl)
       this.setState({ qrcodeSrc, sensorUrl })
     } catch (err) {

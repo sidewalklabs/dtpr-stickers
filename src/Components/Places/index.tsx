@@ -4,6 +4,15 @@ import PlaceList from './PlaceList';
 import PlaceView from './PlaceView';
 import { Route, Switch } from "react-router-dom";
 import { withRouter } from 'react-router-dom'
+import { LngLat } from 'mapbox-gl';
+import { SensorData } from '../Sensors'
+
+export interface PlaceData {
+  placeId: string,
+  name: string,
+  lngLat: LngLat,
+  sensors: SensorData[]
+}
 
 class Places extends Component<any, any> {
   render() {

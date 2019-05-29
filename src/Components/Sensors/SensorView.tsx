@@ -7,7 +7,10 @@ import { SensorData } from './index'
 import { AirtableData, getAirtableData, Option } from '../../utils/airtable'
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Toolbar from '@material-ui/core/Toolbar';
+import BackIcon from '@material-ui/icons/ArrowBack'
 import Accordian from './Accordian'
+import { PlaceData } from '../Places'
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -17,6 +20,14 @@ const styles = (theme: Theme) => createStyles({
     [theme.breakpoints.up('md')]: {
       maxWidth: theme.breakpoints.values.md,
     },
+  },
+  toolbarRight: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  backButton: {
+    marginRight: theme.spacing.unit,
   },
   header: {
     padding: theme.spacing.unit * 3,
@@ -63,7 +74,8 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface State {
-  sensorData?: SensorData,
+  sensorData?: SensorData;
+  parentPlaceName?: string;
   isLoading: boolean;
   logoSrc?: string;
   sensorImageSrc?: string;
@@ -77,6 +89,7 @@ class SensorView extends Component<any, State> {
     this.state = {
       sensorData: undefined,
       isLoading: true,
+      parentPlaceName: undefined,
       logoSrc: undefined,
       sensorImageSrc: undefined,
       airtableData: undefined,
@@ -152,13 +165,24 @@ class SensorView extends Component<any, State> {
             console.log(error)
           });
         }
+
+        if (placeId) {
+          const placeRef = firebase.database().ref(`places/${placeId}`).once('value', (snapshot) => {
+            if (snapshot) {
+              const place: PlaceData | null = snapshot.val();
+              if (place) {
+                this.setState({ parentPlaceName: place.name })
+              }
+            }
+          })
+        }
       }
     });
   }
 
   render() {
     const { classes } = this.props
-    const { isLoading, sensorData, logoSrc, sensorImageSrc, airtableData } = this.state
+    const { isLoading, parentPlaceName, sensorData, logoSrc, sensorImageSrc, airtableData } = this.state
 
     if (isLoading) return <LinearProgress color="secondary" />
     if (!sensorData) return null
@@ -193,11 +217,20 @@ class SensorView extends Component<any, State> {
     const hasfooter = phone || chat || email || onsiteStaff
     return (
       <div className={classes.root}>
+        <Toolbar>
+          {placeId && parentPlaceName && <Button href={`/places/${placeId}`} color='primary'>
+            <BackIcon className={classes.backButton} fontSize="small" />
+            See all sensors at {parentPlaceName}
+          </Button>}
+          <div className={classes.toolbarRight}>
+            <Button href={`${window.location.href}/print`} color='primary'>
+              Try the Sticker Maker
+            </Button>
+          </div>
+        </Toolbar>
         <div className={classes.header}>
           {headline && <Typography gutterBottom variant="h4" component="h2" align='center' style={{ wordBreak: 'break-word' }}>{headline}</Typography>}
-          <Button href={`${window.location.href}/print`} color='primary' variant='outlined'>
-            Try the Sticker Maker
-          </Button>
+
         </div>
         <Divider variant='fullWidth' />
         <div className={classes.summaryWrapper}>

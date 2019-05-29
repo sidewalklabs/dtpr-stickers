@@ -13,7 +13,7 @@ class Header extends Component<any, any> {
       <AppBar className={classes.root} position="sticky">
         <Toolbar>
           <div style={{ flexGrow: 1 }}>
-            <Button href="/" color="inherit">
+            <Button href="/" color="inherit" disableFocusRipple disableRipple style={{ backgroundColor: 'transparent' }}>
               <Typography variant="h6" color="inherit" style={{ textTransform: 'none' }}>
                 Data Transparency in the Public Realm
               </Typography>
@@ -25,11 +25,13 @@ class Header extends Component<any, any> {
                 Login
               </Typography>
             </Button>}
-            {!loading && isSignedIn && <Button onClick={() => firebase.auth().signOut()} color="inherit">
-              <Typography color="inherit" style={{ textTransform: 'none' }}>
-                Sign Out
-              </Typography>
-            </Button>}
+            {!loading && isSignedIn && (
+              <Button onClick={() => firebase.auth().signOut()} color="inherit" disableFocusRipple disableRipple style={{ backgroundColor: 'transparent' }}>
+                <Typography color="inherit" style={{ textTransform: 'none' }}>
+                  Sign Out
+                </Typography>
+              </Button>
+            )}
           </div>
         </Toolbar>
       </AppBar>

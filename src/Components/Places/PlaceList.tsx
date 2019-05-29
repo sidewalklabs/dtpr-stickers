@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import firebase from '../../firebase.js';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import { Typography } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { PlaceData } from '../Places'
 
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -33,7 +34,13 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-class PlaceList extends Component<any, any> {
+
+interface PlaceListState {
+  isLoading: boolean;
+  places: PlaceData[]
+}
+
+class PlaceList extends Component<any, PlaceListState> {
   constructor(props: any) {
     super(props);
 
