@@ -14,11 +14,12 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
-const WHITE_HEX_URL = '/images/container/white/hexagon.svg'
+// Placeholders
+const WHITE_HEX_URL = '/images/hexes/White.png'
 const OUTLINED_HEX_URL = '/images/container/hexagon.svg'
-const YELLOW_HEX_URL = '/images/container/yellow/hexagon.svg'
-const BLUE_HEX_URL = '/images/container/blue/hexagon.svg'
-const BLACK_HEX_URL = '/images/container/black/hexagon.svg'
+const YELLOW_HEX_URL = '/images/hexes/Yellow.png'
+const BLUE_HEX_URL = '/images/hexes/Blue.png'
+const BLACK_HEX_URL = '/images/hexes/Black.png'
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -82,8 +83,6 @@ const styles = (theme: Theme) => createStyles({
     display: "flex",
     justifyContent: 'center',
     alignItems: 'center',
-    height: '300px',
-    width: '300px',
     position: 'relative',
     margin: theme.spacing.unit * 2,
     pageBreakInside: 'avoid',
@@ -120,8 +119,8 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-const badgeSizeToStyle = (badgeSize: number) => {
-  return { height: badgeSize + 'in', width: badgeSize + 'in' }
+const badgeSizeToStyle = (badgeSize: number, ratio: number = 1.137) => {
+  return { height: badgeSize * ratio + 'in', width: badgeSize + 'in' }
 }
 
 interface IconBadgeProps {
@@ -135,7 +134,7 @@ interface IconBadgeProps {
 const IconBadge = withStyles(styles)((props: IconBadgeProps) => {
   const { classes, airtableKey, badgeName, airtableData, badgeSize } = props
   const style = badgeSizeToStyle(badgeSize)
-  const iconWrapperStyle = badgeSizeToStyle(badgeSize / 2)
+  const iconWrapperStyle = badgeSizeToStyle(badgeSize / 2, 1)
 
   const config = airtableData[airtableKey].find(option => option.name === badgeName)
   if (!config) {
@@ -176,7 +175,7 @@ const IconBadge = withStyles(styles)((props: IconBadgeProps) => {
 const AccountabilityBadge = withStyles(styles)((props: any) => {
   const { classes, accountable, logoSrc, badgeSize } = props
   const style = badgeSizeToStyle(badgeSize)
-  const logoWrapperStyle = badgeSizeToStyle(badgeSize / 2.5)
+  const logoWrapperStyle = badgeSizeToStyle(badgeSize / 2.5, 1)
   return <div className={classes.badge} style={style}>
     <img className={`${classes.hex} ${classes.noPrint}`} src={WHITE_HEX_URL} height='100%' width='100%' />
     <img className={`${classes.hex} ${classes.printOnly}`} src={OUTLINED_HEX_URL} height='100%' width='100%' />
@@ -192,7 +191,7 @@ const AccountabilityBadge = withStyles(styles)((props: any) => {
 const QRBadge = withStyles(styles)((props: any) => {
   const { classes, qrcodeSrc, url, badgeSize } = props
   const style = badgeSizeToStyle(badgeSize)
-  const qrWrapperStyle = badgeSizeToStyle(badgeSize / 2.5)
+  const qrWrapperStyle = badgeSizeToStyle(badgeSize / 2, 1)
   const showURL = badgeSize >= 2
   return <div className={classes.badge} style={style}>
     <img className={`${classes.hex} ${classes.noPrint}`} src={WHITE_HEX_URL} height='100%' width='100%' />
