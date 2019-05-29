@@ -60,6 +60,9 @@ class App extends Component {
                   return <Home />
                 }
               }} />
+              <Route path="/login" component={Authentication} />
+              <Route path="/places" render={(props) => <Places {...props} key={uid} uid={uid} />} />
+              <Route path="/sensors" render={(props) => <Sensors {...props} key={uid} uid={uid} />} />
               <Route
                 exact
                 path="/:sensorId"
@@ -67,9 +70,6 @@ class App extends Component {
                   <Redirect to={`/sensors/${props.match.params.sensorId}/`} />
                 )}
               />
-              <Route path="/login" component={Authentication} />
-              <Route path="/places" render={(props) => <Places {...props} key={uid} uid={uid} />} />
-              <Route path="/sensors" render={(props) => <Sensors {...props} key={uid} uid={uid} />} />
             </Switch>
           </Router>
         </MuiThemeProvider>
