@@ -149,6 +149,7 @@ class PlaceView extends Component<any, PlaceViewState> {
             if (featuredPurpose && airtableData) {
               const config = airtableData.purpose.find((option) => option.name === featuredPurpose)
               if (config) icon = `/images/${config.iconShortname}.svg`
+              console.log(icon)
             }
             return (
               <Grid key={id} item xs={12}>

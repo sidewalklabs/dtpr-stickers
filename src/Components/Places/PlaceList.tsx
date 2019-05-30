@@ -37,7 +37,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface PlaceListState {
   isLoading: boolean;
-  places: PlaceData[]
+  places: { [placeId: string]: PlaceData }
 }
 
 class PlaceList extends Component<any, PlaceListState> {
@@ -46,7 +46,7 @@ class PlaceList extends Component<any, PlaceListState> {
 
     this.state = {
       isLoading: true,
-      places: [],
+      places: {},
     };
   }
 
@@ -61,20 +61,17 @@ class PlaceList extends Component<any, PlaceListState> {
           placeId => firebase.database().ref(`/places/${placeId}`).once('value')
         );
 
-        let newState: Array<any> = [];
+        let placeIdToPlaceData: { [placeId: string]: PlaceData } = {};
         Promise.all(promises).then(results => {
           results.forEach(result => {
             const id = result.key
-            const place = result.val()
-            if (place) {
-              newState.push({
-                id,
-                name: place.name,
-              });
+            const place: PlaceData | null = result.val()
+            if (id && place) {
+              placeIdToPlaceData[id] = place
             }
           });
           this.setState({
-            places: newState,
+            places: placeIdToPlaceData,
             isLoading: false,
           });
         });
@@ -103,8 +100,10 @@ class PlaceList extends Component<any, PlaceListState> {
               </CardActionArea>
             </Card>
           </Grid>
-          {places.map((place: any) => {
-            const { id, name } = place
+          {Object.keys(places).map((id: string) => {
+            const place = places[id]
+            const { name, sensors } = place
+            const numSensors = sensors ? Object.keys(sensors).length : 0
             return (
               <Grid key={id} item xs={12} sm={6} md={4} lg={3}>
                 <Card className={classes.card}>
@@ -112,6 +111,11 @@ class PlaceList extends Component<any, PlaceListState> {
                     <CardContent>
                       <Typography gutterBottom variant="h6" component="h2">
                         {name}
+                      </Typography>
+                      <Typography variant="subtitle2">
+                        {numSensors}&nbsp;
+                        {numSensors === 1 && `sensor`}
+                        {numSensors !== 1 && `sensors`}
                       </Typography>
                     </CardContent>
                   </CardActionArea>
