@@ -1,23 +1,20 @@
 import React, { Component } from 'react';
-import firebase from '../../firebase.js';
-import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import { Typography } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import { AirtableData, getAirtableData, Option } from '../../utils/airtable'
-
-import { PlaceData } from '../Places'
-
-import { SensorData } from '../Sensors'
-import SensorForm from '../Sensors/SensorForm'
-
-import LocationPicker from '../LocationPicker';
-import * as MapboxGL from 'mapbox-gl';
-
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
+import Grid from '@material-ui/core/Grid';
+import { Typography } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+import AddIcon from '@material-ui/icons/Add';
+import firebase from '../../firebase.js';
+import { AirtableData, getAirtableData } from '../../utils/airtable'
+import LocationPicker from '../LocationPicker';
+import { PlaceData } from '../Places'
+import { SensorData } from '../Sensors'
+import SensorForm from '../Sensors/SensorForm'
+import * as MapboxGL from 'mapbox-gl';
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -128,10 +125,10 @@ class PlaceView extends Component<any, PlaceViewState> {
     const { name, lngLat = {} } = place
     const markerLocation = lngLat ? Object.values(lngLat).reverse() : undefined
 
-    // TODO: fix this logic
-    const userHasAccess = !!this.props.uid
+    const userHasAccess = place.admins && place.admins[this.props.uid]
     return (
       <div className={classes.root}>
+        {userHasAccess && <Button href={`/places/${placeId}/edit`} color='primary' variant='contained'>Edit</Button>}
         <Typography gutterBottom variant="h4" component="h2">{name}</Typography>
         <div className={classes.locationPicker}>
           {lngLat && <LocationPicker
@@ -149,7 +146,6 @@ class PlaceView extends Component<any, PlaceViewState> {
             if (featuredPurpose && airtableData) {
               const config = airtableData.purpose.find((option) => option.name === featuredPurpose)
               if (config) icon = `/images/${config.iconShortname}.svg`
-              console.log(icon)
             }
             return (
               <Grid key={id} item xs={12}>
@@ -184,7 +180,7 @@ class PlaceView extends Component<any, PlaceViewState> {
             </Card>
           </Grid>}
         </Grid>
-      </div>
+      </div >
     );
   }
 }

@@ -74,6 +74,7 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface State {
+  uid: string | null;
   sensorData?: SensorData;
   parentPlaceName?: string;
   isLoading: boolean;
@@ -87,6 +88,7 @@ class SensorView extends Component<any, State> {
     super(props);
 
     this.state = {
+      uid: null,
       sensorData: undefined,
       isLoading: true,
       parentPlaceName: undefined,
@@ -126,7 +128,8 @@ class SensorView extends Component<any, State> {
             email = '',
             onsiteStaff = '',
             logoRef = '',
-            sensorImageRef = ''
+            sensorImageRef = '',
+            admins = {},
           } = sensorData
           this.setState({
             sensorData: {
@@ -147,7 +150,8 @@ class SensorView extends Component<any, State> {
               email,
               onsiteStaff,
               logoRef,
-              sensorImageRef
+              sensorImageRef,
+              admins
             },
             isLoading: false,
           });
@@ -183,14 +187,21 @@ class SensorView extends Component<any, State> {
         }
       }
     });
+
+    firebase.auth().onAuthStateChanged(
+      (user) => this.setState({ uid: (user && user.uid) || null })
+    );
   }
 
   render() {
     const { classes } = this.props
-    const { isLoading, parentPlaceName, sensorData, logoSrc, sensorImageSrc, airtableData } = this.state
+    const { uid, isLoading, parentPlaceName, sensorData, logoSrc, sensorImageSrc, airtableData } = this.state
+    const { sensorId } = this.props.match.params
 
     if (isLoading) return <LinearProgress color="secondary" />
     if (!sensorData) return <Typography>Hmm can't find that sensor :/</Typography>
+
+    const isAdmin = uid && sensorData.admins && sensorData.admins[uid]
 
     const {
       placeId,
@@ -227,11 +238,14 @@ class SensorView extends Component<any, State> {
             <BackIcon className={classes.backButton} fontSize="small" />
             See all sensors at {parentPlaceName}
           </Button>}
-          <div className={classes.toolbarRight}>
-            <Button href={`${window.location.href}/print`} color='primary'>
+          {isAdmin && <div className={classes.toolbarRight}>
+            <Button href={`/sensors/${sensorId}/print`} color='primary'>
               Try the Sticker Maker
             </Button>
-          </div>
+            <Button href={`/sensors/${sensorId}/edit`} color='primary' variant='contained'>
+              Edit
+            </Button>
+          </div>}
         </Toolbar>
         <div className={classes.header}>
           {headline && <Typography gutterBottom variant="h4" component="h2" align='center' style={{ wordBreak: 'break-word' }}>{headline}</Typography>}

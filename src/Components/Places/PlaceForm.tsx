@@ -1,68 +1,47 @@
 import React from 'react';
-import shortid from "shortid";
 import Button from '@material-ui/core/Button';
-import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LocationPicker from '../LocationPicker';
 import * as MapboxGL from 'mapbox-gl';
 
-import { withRouter } from 'react-router-dom'
 import firebase from '../../firebase.js';
+import { PlaceData } from '../Places'
 
-class PlaceForm extends React.Component<any, any> {
+interface PlaceFormProps extends PlaceData, WithStyles<typeof styles> {
+  uid: string;
+  id: string;
+  title: string;
+  onSave(id: string): void;
+}
+
+class PlaceForm extends React.Component<PlaceFormProps, PlaceData> {
   constructor(props: any) {
     super(props);
 
     this.state = {
-      loading: true,
-      id: '',
-      name: '',
-      lngLat: { lat: 40.917684, lng: -74.293952 },
-      sensors: [],
+      name: props.name,
+      lngLat: props.lngLat,
+      sensors: props.sensors,
+      admins: props.admins,
     };
   }
 
-  async componentDidMount() {
-    const { uid } = this.props
-    const { placeId } = this.props.match.params
-    if (placeId) {
-      const placeRef = firebase.database().ref(`places/${placeId}`)
-
-      placeRef.on('value', (snapshot) => {
-        if (snapshot) {
-          const item = snapshot.val();
-          const { name, lngLat, sensors } = item
-          this.setState({ name, lngLat, sensors, loading: false });
-        } else {
-          this.setState({ loading: false });
-        }
-      });
-    } else {
-      this.setState({ id: shortid.generate(), uid, loading: false })
-    }
-  }
-
-  handleChange(key: string, value: number | string, name: string) {
-    this.setState({
-      [key]: value,
-    })
-  }
-
   handleSubmit() {
-    const { uid } = this.props
-    if (uid) {
-      const { id, name, lngLat, sensors } = this.state
-      const newPlaceData = { name, lngLat, sensors }
+    const { id, uid } = this.props
+    if (id && uid) {
+      const { name, lngLat, sensors, admins } = this.state
+      const newPlaceData = { name, lngLat, sensors, admins: { ...admins, [uid]: true } }
+      console.log(newPlaceData)
       const updates: { [key: string]: any } = {};
       updates['/places/' + id] = newPlaceData;
       updates[`users/${uid}/places/${id}`] = true;
       firebase.database().ref().update(updates, (error) => {
         if (error) {
           console.error(error)
-          this.props.history.push(`/places/${id}`)
         } else {
-          this.props.history.push(`/places/${id}`)
+          this.props.onSave(id);
         }
       });
     } else {
@@ -71,11 +50,11 @@ class PlaceForm extends React.Component<any, any> {
   }
 
   render() {
-    const { classes } = this.props
+    const { id, uid, classes, title } = this.props
     const { name, lngLat } = this.state
     return (
       <div className={classes.root}>
-        <Typography gutterBottom variant="h5" component="h2">Create a New Place</Typography>
+        <Typography gutterBottom variant="h5" component="h2">{title}</Typography>
         <TextField
           id="name"
           label="Place Name"
@@ -115,4 +94,4 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-export default withStyles(styles, { withTheme: true })(withRouter(PlaceForm));
+export default withStyles(styles, { withTheme: true })(PlaceForm);

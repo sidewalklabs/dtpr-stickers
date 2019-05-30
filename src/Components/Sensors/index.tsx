@@ -6,6 +6,7 @@ import { Route, Switch } from "react-router-dom";
 import { withRouter } from 'react-router-dom'
 
 export interface SensorData {
+  admins: { [uid: string]: boolean },
   placeId: string,
   name: string,
   headline: string,

@@ -1,4 +1,6 @@
 import firebase from 'firebase'
+
+// TODO: remove keys from repo and use a swl bucket
 const config = {
   apiKey: "AIzaSyDVa2ls3tbEkeEPaKtX8T7P2izKAsPIr9w",
   authDomain: "stickers-7e1f1.firebaseapp.com",

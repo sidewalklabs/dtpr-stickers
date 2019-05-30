@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import PlaceForm from './PlaceForm';
+import CreatePlaceView from './CreatePlaceView';
+import EditPlaceView from './EditPlaceView';
 import PlaceList from './PlaceList';
 import PlaceView from './PlaceView';
 import { Route, Switch } from "react-router-dom";
 import { withRouter } from 'react-router-dom'
 import { LngLat } from 'mapbox-gl';
-import { SensorData } from '../Sensors'
 
 export interface PlaceData {
-  placeId: string,
   name: string,
   lngLat: LngLat,
   sensors: { [sensorId: string]: boolean }
+  admins: { [uid: string]: boolean },
 }
 
 class Places extends Component<any, any> {
@@ -20,7 +20,8 @@ class Places extends Component<any, any> {
     return (
       <Switch>
         <Route exact path={this.props.match.path} render={(props) => <PlaceList key={uid} {...props} uid={uid} />} />
-        <Route path={`${this.props.match.path}/new`} render={(props) => <PlaceForm key={uid} {...props} uid={uid} />} />
+        <Route path={`${this.props.match.path}/new`} render={(props) => <CreatePlaceView key={uid} {...props} uid={uid} />} />
+        <Route path={`${this.props.match.path}/:placeId/edit`} render={(props) => <EditPlaceView key={uid} {...props} uid={uid} />} />
         <Route path={`${this.props.match.path}/:placeId`} render={(props) => <PlaceView key={uid} {...props} uid={uid} />} />
       </Switch>
     );

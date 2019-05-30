@@ -66,6 +66,7 @@ class SensorForm extends React.Component<any, State> {
         onsiteStaff: '',
         logoRef: '',
         sensorImageRef: '',
+        admins: {},
       },
       airtableData: undefined,
     };
