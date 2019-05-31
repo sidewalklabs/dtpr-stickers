@@ -1,13 +1,12 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import shortid from "shortid";
 import MenuItem from '@material-ui/core/MenuItem';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
@@ -20,8 +19,14 @@ import { AirtableData, getAirtableData } from '../../utils/airtable'
 
 import { SensorData } from './index'
 
-import { withRouter } from 'react-router-dom'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import firebase from '../../firebase.js';
+
+interface Props extends SensorData, WithStyles<typeof styles>, RouteComponentProps {
+  sensorId: string;
+  sensorImageSrc?: string,
+  logoSrc?: string,
+}
 
 interface State {
   sensorId: string,
@@ -36,39 +41,39 @@ interface State {
   sensorImageUploadProgress: number,
 }
 
-class SensorForm extends React.Component<any, State> {
+class SensorForm extends React.Component<Props, State> {
   logoFileUpload: any = undefined
   constructor(props: any) {
     super(props);
-
+    console.log("props", props)
     this.state = {
       activeStep: 0,
-      logoPreviewSrc: undefined,
-      sensorId: shortid.generate(),
+      logoPreviewSrc: props.logoSrc,
+      sensorImagePreviewSrc: props.sensorImageSrc,
+      sensorId: props.sensorId,
       logoUploadProgress: 101,
       sensorImageUploadProgress: 101,
-      sensorData: {
-        name: '',
-        placeId: props.placeId,
-        headline: '',
-        description: '',
-        accountable: '',
-        accountableDescription: '',
-        purpose: [],
-        techType: [],
-        dataType: [],
-        dataProcess: [],
-        access: [],
-        storage: [],
-        phone: '',
-        chat: '',
-        email: '',
-        onsiteStaff: '',
-        logoRef: '',
-        sensorImageRef: '',
-        admins: {},
-      },
       airtableData: undefined,
+      sensorData: {
+        name: props.name,
+        placeId: props.placeId,
+        headline: props.headline,
+        description: props.description,
+        accountable: props.accountable,
+        accountableDescription: props.accountableDescription,
+        purpose: props.purpose,
+        techType: props.techType,
+        dataType: props.dataType,
+        dataProcess: props.dataProcess,
+        access: props.access,
+        storage: props.storage,
+        phone: props.phone,
+        chat: props.chat,
+        email: props.email,
+        onsiteStaff: props.onsiteStaff,
+        logoRef: props.logoRef,
+        sensorImageRef: props.sensorImageRef,
+      },
     };
   }
 
@@ -405,12 +410,10 @@ class SensorForm extends React.Component<any, State> {
       firebase.database().ref().update(updates, (error) => {
         if (error) {
           console.error(error)
-          this.props.history.push(`/sensors/${sensorId}`)
         } else {
           this.props.history.push(`/sensors/${sensorId}`)
         }
       });
-      this.props.history.push(`/sensors/${sensorId}`)
     } else {
       console.log("Unable to save. User not logged in")
     }

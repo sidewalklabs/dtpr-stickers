@@ -74,13 +74,13 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface State {
-  uid: string | null;
   sensorData?: SensorData;
   parentPlaceName?: string;
   isLoading: boolean;
   logoSrc?: string;
   sensorImageSrc?: string;
   airtableData?: AirtableData;
+  isAdmin: boolean;
 }
 
 class SensorView extends Component<any, State> {
@@ -88,13 +88,13 @@ class SensorView extends Component<any, State> {
     super(props);
 
     this.state = {
-      uid: null,
       sensorData: undefined,
       isLoading: true,
       parentPlaceName: undefined,
       logoSrc: undefined,
       sensorImageSrc: undefined,
       airtableData: undefined,
+      isAdmin: false,
     };
   }
 
@@ -129,7 +129,6 @@ class SensorView extends Component<any, State> {
             onsiteStaff = '',
             logoRef = '',
             sensorImageRef = '',
-            admins = {},
           } = sensorData
           this.setState({
             sensorData: {
@@ -151,7 +150,6 @@ class SensorView extends Component<any, State> {
               onsiteStaff,
               logoRef,
               sensorImageRef,
-              admins
             },
             isLoading: false,
           });
@@ -175,11 +173,18 @@ class SensorView extends Component<any, State> {
           }
 
           if (placeId) {
-            const placeRef = firebase.database().ref(`places/${placeId}`).once('value', (snapshot) => {
+            firebase.database().ref(`places/${placeId}`).once('value', (snapshot) => {
               if (snapshot) {
                 const place: PlaceData | null = snapshot.val();
                 if (place) {
                   this.setState({ parentPlaceName: place.name })
+                  firebase.auth().onAuthStateChanged(
+                    (user) => {
+                      const uid = user && user.uid
+                      const isAdmin = (uid && place.admins && place.admins[uid]) || false
+                      this.setState({ isAdmin })
+                    }
+                  );
                 }
               }
             })
@@ -187,21 +192,15 @@ class SensorView extends Component<any, State> {
         }
       }
     });
-
-    firebase.auth().onAuthStateChanged(
-      (user) => this.setState({ uid: (user && user.uid) || null })
-    );
   }
 
   render() {
     const { classes } = this.props
-    const { uid, isLoading, parentPlaceName, sensorData, logoSrc, sensorImageSrc, airtableData } = this.state
+    const { isLoading, isAdmin, parentPlaceName, sensorData, logoSrc, sensorImageSrc, airtableData } = this.state
     const { sensorId } = this.props.match.params
 
     if (isLoading) return <LinearProgress color="secondary" />
     if (!sensorData) return <Typography>Hmm can't find that sensor :/</Typography>
-
-    const isAdmin = uid && sensorData.admins && sensorData.admins[uid]
 
     const {
       placeId,

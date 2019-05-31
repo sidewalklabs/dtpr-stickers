@@ -13,7 +13,7 @@ import { AirtableData, getAirtableData } from '../../utils/airtable'
 import LocationPicker from '../LocationPicker';
 import { PlaceData } from '../Places'
 import { SensorData } from '../Sensors'
-import SensorForm from '../Sensors/SensorForm'
+import CreateSensorForm from '../Sensors/CreateSensorForm'
 import * as MapboxGL from 'mapbox-gl';
 
 const styles = (theme: Theme) => createStyles({
@@ -176,7 +176,7 @@ class PlaceView extends Component<any, PlaceViewState> {
           </Grid>}
           {this.state.displayForm && <Grid item xs={12}>
             <Card className={classes.card}>
-              <SensorForm placeId={placeId} />
+              <CreateSensorForm placeId={placeId} />
             </Card>
           </Grid>}
         </Grid>

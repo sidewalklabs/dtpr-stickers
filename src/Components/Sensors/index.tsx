@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import SensorForm from './SensorForm';
+import EditSensorForm from './EditSensorForm';
 import SensorPrintView from './SensorPrintView';
 import SensorView from './SensorView';
 import { Route, Switch } from "react-router-dom";
 import { withRouter } from 'react-router-dom'
 
 export interface SensorData {
-  admins: { [uid: string]: boolean },
   placeId: string,
   name: string,
   headline: string,
@@ -30,12 +29,11 @@ export interface SensorData {
 class Sensors extends Component<any, any> {
   render() {
     const { uid } = this.props
-    SensorView
     return (
       <Switch>
-        <Route path={`${this.props.match.path}/new`} render={(props) => <SensorForm key={uid} {...props} uid={uid} />} />
-        <Route path={`${this.props.match.path}/:sensorId/print`} render={(props) => <SensorPrintView key={uid} {...props} uid={uid} />} />
-        <Route path={`${this.props.match.path}/:sensorId`} render={(props) => <SensorView key={uid} {...props} uid={uid} />} />
+        <Route path={`/sensors/:sensorId/print`} render={(props) => <SensorPrintView key={uid} {...props} />} />
+        <Route path={`/sensors/:sensorId/edit`} render={(props) => <EditSensorForm key={uid} {...props} />} />
+        <Route path={`/sensors/:sensorId`} render={(props) => <SensorView key={uid} {...props} />} />
       </Switch>
     );
   }
