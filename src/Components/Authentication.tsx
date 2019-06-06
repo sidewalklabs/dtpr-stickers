@@ -37,18 +37,12 @@ class Authentication extends Component<any, any> {
 
   render() {
     const firebaseAuth = firebase.auth()
-    if (!this.state.isSignedIn) {
-      return (
-        <div>
-          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebaseAuth} />
-        </div>
-      );
-    }
+
+    if (this.state.isSignedIn) return null
+
     return (
       <div>
-        <div>
-          <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
-        </div>
+        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebaseAuth} />
       </div>
     );
   }
