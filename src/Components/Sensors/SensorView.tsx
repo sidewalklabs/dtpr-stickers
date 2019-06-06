@@ -126,7 +126,7 @@ class SensorView extends Component<any, State> {
             phone = '',
             chat = '',
             email = '',
-            onsiteStaff = '',
+            onsiteStaff = false,
             logoRef = '',
             sensorImageRef = '',
           } = sensorData

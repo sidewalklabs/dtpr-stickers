@@ -21,7 +21,7 @@ export interface SensorData {
   phone: string,
   chat: string,
   email: string,
-  onsiteStaff: string,
+  onsiteStaff: boolean,
   logoRef: string,
   sensorImageRef: string,
 }

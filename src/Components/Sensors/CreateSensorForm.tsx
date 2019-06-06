@@ -25,7 +25,7 @@ class CreateSensorForm extends React.Component<CreateSensorFormProps, any> {
       phone=''
       chat=''
       email=''
-      onsiteStaff=''
+      onsiteStaff={false}
       logoRef=''
       sensorImageRef=''
     />

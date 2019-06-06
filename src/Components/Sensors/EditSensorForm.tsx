@@ -40,7 +40,7 @@ class EditSensorForm extends React.Component<any, State> {
         phone: '',
         chat: '',
         email: '',
-        onsiteStaff: '',
+        onsiteStaff: false,
         logoRef: '',
         sensorImageRef: '',
       },
@@ -73,7 +73,7 @@ class EditSensorForm extends React.Component<any, State> {
             phone = '',
             chat = '',
             email = '',
-            onsiteStaff = '',
+            onsiteStaff = false,
             logoRef = '',
             sensorImageRef = '',
           } = sensorData
