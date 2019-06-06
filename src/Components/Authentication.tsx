@@ -8,8 +8,16 @@ const uiConfig = {
   signInFlow: 'popup',
   signInSuccessUrl: '/',
   signInOptions: [
-    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    // firebase.auth.EmailAuthProvider.PROVIDER_ID
+    {
+      provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      customParameters: {
+        // restrict to display of swl emails only
+        hd: 'sidewalklabs.com',
+        // Forces account selection even when one account
+        // is available.
+        prompt: 'select_account',
+      }
+    },
   ],
   credentialHelper: firebaseui.auth.CredentialHelper.NONE
 };
