@@ -33,7 +33,6 @@ class PlaceForm extends React.Component<PlaceFormProps, PlaceData> {
     if (id && uid) {
       const { name, lngLat, sensors, admins } = this.state
       const newPlaceData = { name, lngLat, sensors, admins: { ...admins, [uid]: true } }
-      console.log(newPlaceData)
       const updates: { [key: string]: any } = {};
       updates['/places/' + id] = newPlaceData;
       updates[`users/${uid}/places/${id}`] = true;

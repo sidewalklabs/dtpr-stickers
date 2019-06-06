@@ -1,6 +1,21 @@
 {
   "rules": {
-    ".read": true,
-    ".write": "auth != null"
+    "users": {
+      "$uid": {
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "places": {
+      ".read": true,
+      ".write": "!data.exists() || data.child('admins').child(auth.uid).exists()",
+      ".indexOn": [
+        "sensors",
+        "name"
+      ]
+    },
+    "sensors": {
+      ".read": true,
+      ".write": "!data.exists() || root.child('places/'+ newData.child('placeID').val()).child('admins').child(auth.uid).exists()",
+    }
   }
 }
