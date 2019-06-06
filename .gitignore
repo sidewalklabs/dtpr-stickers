@@ -1,5 +1,6 @@
 # generated build directory
 build/*
+.env
 
 # Logs
 logs

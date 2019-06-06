@@ -14,7 +14,7 @@ import Header from './Components/Header';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import ReactGA from 'react-ga';
-ReactGA.initialize('UA-141596258-1');
+ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || '');
 
 const theme = createMuiTheme({
   palette: {
@@ -53,7 +53,7 @@ class App extends Component {
   }
 
   trackPageView() {
-    console.log("tracking page view", window.location.pathname, window.location.search)
+    console.log("page view:", window.location.pathname, window.location.search)
     ReactGA.pageview(window.location.pathname + window.location.search);
   }
 

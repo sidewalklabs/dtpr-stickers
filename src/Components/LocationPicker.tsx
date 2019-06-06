@@ -3,9 +3,7 @@ import * as MapboxGL from 'mapbox-gl';
 import ReactMapboxGl, { Marker } from 'react-mapbox-gl';
 import PlaceIcon from '@material-ui/icons/Place';
 
-// TODO: remove this from repo and use new token
-const ACCESS_TOKEN =
-  'pk.eyJ1IjoiZGFudmsiLCJhIjoiY2lrZzJvNDR0MDBhNXR4a2xqNnlsbWx3ciJ9.myJhweYd_hrXClbKk8XLgQ';
+const ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN || '';
 
 const Map = ReactMapboxGl({
   accessToken: ACCESS_TOKEN,
