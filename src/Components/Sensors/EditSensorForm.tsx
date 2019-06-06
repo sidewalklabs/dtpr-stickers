@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from '../../firebase.js';
 import SensorForm from './SensorForm'
-import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import { Redirect, withRouter } from 'react-router-dom'
 import { SensorData } from './index'
 import { PlaceData } from '../Places'

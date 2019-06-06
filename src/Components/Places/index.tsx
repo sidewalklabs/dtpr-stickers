@@ -19,10 +19,10 @@ class Places extends Component<any, any> {
     const { uid } = this.props
     return (
       <Switch>
-        <Route exact path={this.props.match.path} render={(props) => <PlaceList key={uid} {...props} uid={uid} />} />
-        <Route path={`${this.props.match.path}/new`} render={(props) => <CreatePlaceView key={uid} {...props} uid={uid} />} />
-        <Route path={`${this.props.match.path}/:placeId/edit`} render={(props) => <EditPlaceView key={uid} {...props} uid={uid} />} />
-        <Route path={`${this.props.match.path}/:placeId`} render={(props) => <PlaceView key={uid} {...props} uid={uid} />} />
+        <Route exact path='/' render={(props) => <PlaceList key={uid} {...props} uid={uid} />} />
+        <Route path='/places/new' render={(props) => <CreatePlaceView key={uid} {...props} uid={uid} />} />
+        <Route path='/places/:placeId/edit' render={(props) => <EditPlaceView key={uid} {...props} uid={uid} />} />
+        <Route path='/places/:placeId' render={(props) => <PlaceView key={uid} {...props} uid={uid} />} />
       </Switch>
     );
   }

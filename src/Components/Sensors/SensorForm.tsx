@@ -45,7 +45,6 @@ class SensorForm extends React.Component<Props, State> {
   logoFileUpload: any = undefined
   constructor(props: any) {
     super(props);
-    console.log("props", props)
     this.state = {
       activeStep: 0,
       logoPreviewSrc: props.logoSrc,

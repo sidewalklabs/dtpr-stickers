@@ -13,6 +13,9 @@ import Authentication from './Components/Authentication';
 import Header from './Components/Header';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
+import ReactGA from 'react-ga';
+ReactGA.initialize('UA-141596258-1');
+
 const theme = createMuiTheme({
   palette: {
     primary: blue,
@@ -49,6 +52,11 @@ class App extends Component {
     );
   }
 
+  trackPageView() {
+    console.log("tracking page view", window.location.pathname, window.location.search)
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }
+
   render() {
     const { loading, isSignedIn, uid, email, displayName } = this.state
     return (
@@ -56,27 +64,38 @@ class App extends Component {
         <MuiThemeProvider theme={theme} >
           <CssBaseline />
           <Header loading={loading} isSignedIn={isSignedIn} />
-          <Router>
+          {!loading && <Router>
             <Switch>
               <Route path="/" exact render={(props) => {
+                this.trackPageView();
                 if (isSignedIn) {
                   return <Places {...props} key={uid} uid={uid} />
                 } else {
                   return <Home />
                 }
               }} />
-              <Route path="/login" component={Authentication} />
-              <Route path="/places" render={(props) => <Places {...props} key={uid} uid={uid} />} />
-              <Route path="/sensors" render={(props) => <Sensors {...props} key={uid} uid={uid} />} />
+              <Route path="/login" render={(props) => {
+                this.trackPageView();
+                return <Authentication {...props} />
+              }} />
+              <Route path="/places" render={(props) => {
+                this.trackPageView();
+                return <Places {...props} key={uid} uid={uid} />
+              }} />
+              <Route path="/sensors" render={(props) => {
+                this.trackPageView();
+                return <Sensors {...props} key={uid} uid={uid} />
+              }} />
               <Route
                 exact
                 path="/:sensorId"
-                render={props => (
-                  <Redirect to={`/sensors/${props.match.params.sensorId}/`} />
-                )}
+                render={props => {
+                  this.trackPageView();
+                  return <Redirect to={`/sensors/${props.match.params.sensorId}/`} />
+                }}
               />
             </Switch>
-          </Router>
+          </Router>}
         </MuiThemeProvider>
       </React.Fragment>
     );
