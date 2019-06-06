@@ -306,19 +306,19 @@ class SensorView extends Component<any, State> {
         {hasfooter && <div className={classes.footer}>
           <Typography gutterBottom variant="h6">Want to know more?</Typography>
           {email && <div>
-            <Typography variant="subtitle2" inline>Email:</Typography>
-            <Typography gutterBottom variant="body2" inline>&nbsp;{email}</Typography>
+            <Typography variant="subtitle2" inline>Email:&nbsp;</Typography>
+            <Typography gutterBottom variant="body2" inline><a href={`mailto:${email}`}>{email}</a></Typography>
           </div>}
           {phone && <div>
-            <Typography variant="subtitle2" inline>Call:</Typography>
-            <Typography gutterBottom variant="body2" inline>&nbsp;{phone}</Typography>
+            <Typography variant="subtitle2" inline>Call:&nbsp;</Typography>
+            <Typography gutterBottom variant="body2" inline>{phone}</Typography>
           </div>}
           {chat && <div>
-            <Typography variant="subtitle2" inline>Chat:</Typography>
-            <Typography gutterBottom variant="body2" inline>&nbsp;{chat}</Typography>
+            <Typography variant="subtitle2" inline>Chat:&nbsp;</Typography>
+            <Typography gutterBottom variant="body2" inline><a href={chat} target='_blank'>{chat}</a></Typography>
           </div>}
           {onsiteStaff && <div>
-            <Typography variant="subtitle2" inline>Visit:</Typography>
+            <Typography variant="subtitle2" inline>Visit:&nbsp;</Typography>
             <Typography gutterBottom variant="body2" inline>Chat with our on-site staff</Typography>
           </div>}
         </div>}
