@@ -28,7 +28,7 @@ const styles = (theme: Theme) => createStyles({
   expansionPanelRoot: {
     backgroundImage: 'url(/images/chain/middle.svg)',
     backgroundRepeat: 'no-repeat',
-    backgroundPosition: '24px 0',
+    backgroundPosition: '16px 0',
     boxShadow: 'none',
     '&:first-of-type': {
       backgroundImage: 'url(/images/chain/top.svg)',
@@ -49,6 +49,7 @@ const styles = (theme: Theme) => createStyles({
   expansionPanelSummaryRoot: {
     margin: '0',
     minHeight: '56px',
+    padding: '0 16px 0 16px',
     '&$expansionPanelSummaryExpanded': {
       margin: 0,
       minHeight: '56px',
@@ -69,7 +70,7 @@ const styles = (theme: Theme) => createStyles({
   },
   expansionPanelDetailsRoot: {
     borderLeft: '2px solid #000',
-    marginLeft: theme.spacing.unit * 5 + 1,
+    marginLeft: theme.spacing.unit * 4 + 1,
     paddingLeft: theme.spacing.unit * 3,
     paddingTop: 0,
     paddingRight: theme.spacing.unit * 3,

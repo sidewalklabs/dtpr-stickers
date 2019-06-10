@@ -4,17 +4,18 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Fab from '@material-ui/core/Fab';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
 import firebase from '../../firebase.js';
 import { AirtableData, getAirtableData } from '../../utils/airtable'
-import LocationPicker from '../LocationPicker';
+import StaticMap from '../StaticMap';
 import { PlaceData } from '../Places'
 import { SensorData } from '../Sensors'
 import CreateSensorForm from '../Sensors/CreateSensorForm'
-import * as MapboxGL from 'mapbox-gl';
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -32,19 +33,22 @@ const styles = (theme: Theme) => createStyles({
   },
   cardContent: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center'
   },
   cardIcon: {
-    marginRight: theme.spacing.unit
+    marginBottom: theme.spacing.unit
   },
   addSensorButton: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
+    position: 'fixed',
+    bottom: theme.spacing.unit * 2,
+    right: '50%',
+    transform: 'translateX(50%)'
   },
-  locationPicker: {
+  addIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  staticMap: {
     marginBottom: theme.spacing.unit * 2,
     width: '100%',
     height: '200px'
@@ -128,16 +132,20 @@ class PlaceView extends Component<any, PlaceViewState> {
     const userHasAccess = place.admins && place.admins[this.props.uid]
     return (
       <div className={classes.root}>
-        {userHasAccess && <Button href={`/places/${placeId}/edit`} color='primary' variant='contained'>Edit</Button>}
-        <Typography gutterBottom variant="h4" component="h2">{name}</Typography>
-        <div className={classes.locationPicker}>
-          {lngLat && <LocationPicker
-            onSelectLocation={(lngLat: MapboxGL.LngLat) => { }}
+        <div>
+          <Typography gutterBottom variant="h4" component="h2">{name}&nbsp;
+            {userHasAccess && <IconButton href={`/places/${placeId}/edit`} aria-label="Edit">
+              <EditIcon />
+            </IconButton>}
+          </Typography>
+        </div>
+        <div className={classes.staticMap}>
+          {lngLat && <StaticMap
             markerLocation={markerLocation}
             center={markerLocation}
           />}
         </div>
-        <Grid container spacing={24}>
+        <Grid container spacing={16}>
           {sensorDataList && Object.keys(sensorDataList).map((id) => {
             const sensor = sensorDataList[id]
             const { name, purpose } = sensor
@@ -148,12 +156,12 @@ class PlaceView extends Component<any, PlaceViewState> {
               if (config) icon = `/images/${config.iconShortname}.svg`
             }
             return (
-              <Grid key={id} item xs={12}>
-                <Card className={classes.card}>
+              <Grid key={id} item xs={4} sm={3}>
+                <Card className={classes.card} elevation={0}>
                   <CardActionArea className={classes.cardActionArea} href={`/sensors/${id}`}>
                     <CardContent className={classes.cardContent}>
                       {icon && <img className={classes.cardIcon} src={icon} />}
-                      <Typography variant="subtitle1" component="h2">
+                      <Typography variant="body2" align='center'>
                         {name}
                       </Typography>
                     </CardContent>
@@ -162,18 +170,16 @@ class PlaceView extends Component<any, PlaceViewState> {
               </Grid>
             )
           })}
-          {userHasAccess && !this.state.displayForm && <Grid item xs={12}>
-            <Card className={classes.card}>
-              <CardActionArea className={classes.cardActionArea} onClick={() => { this.setState({ displayForm: true }) }}>
-                <CardContent className={classes.addSensorButton}>
-                  <AddIcon fontSize='large' color='primary' />
-                  <Typography color='primary' gutterBottom variant="subtitle2" component="h2">
-                    Add a Sensor
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Grid>}
+          {userHasAccess && !this.state.displayForm && <Fab
+            variant="extended"
+            aria-label="Add"
+            className={classes.addSensorButton}
+            color='primary'
+            onClick={() => { this.setState({ displayForm: true }) }}
+          >
+            <AddIcon className={classes.addIcon} />
+            Add
+          </Fab>}
           {this.state.displayForm && <Grid item xs={12}>
             <Card className={classes.card}>
               <CreateSensorForm placeId={placeId} />

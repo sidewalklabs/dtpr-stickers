@@ -6,7 +6,7 @@ import common from '@material-ui/core/colors/common';
 import Home from './Components/Home';
 import Places from './Components/Places';
 import Sensors from './Components/Sensors';
-import { BrowserRouter as Router, Switch, Redirect, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Redirect, Route, } from "react-router-dom";
 import firebase from './firebase.js';
 
 import Authentication from './Components/Authentication';
@@ -15,6 +15,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import ReactGA from 'react-ga';
 ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || '');
+
+const HEADERED_PATHS = ['/', '/login']
 
 const theme = createMuiTheme({
   palette: {
@@ -34,7 +36,15 @@ const theme = createMuiTheme({
   },
 });
 
-class App extends Component {
+interface State {
+  loading: boolean,
+  isSignedIn: boolean,
+  uid?: string | null,
+  email?: string | null,
+  displayName?: string | null,
+}
+
+class App extends Component<any, State> {
   state = {
     loading: true,
     isSignedIn: false,
@@ -59,11 +69,13 @@ class App extends Component {
 
   render() {
     const { loading, isSignedIn, uid, email, displayName } = this.state
+    const showHeader = isSignedIn || HEADERED_PATHS.includes(window.location.pathname)
+    console.log(this.props)
     return (
       <React.Fragment>
         <MuiThemeProvider theme={theme} >
           <CssBaseline />
-          <Header loading={loading} isSignedIn={isSignedIn} />
+          {showHeader && <Header loading={loading} isSignedIn={isSignedIn} />}
           {!loading && <Router>
             <Switch>
               <Route path="/" exact render={(props) => {

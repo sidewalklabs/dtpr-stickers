@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import * as MapboxGL from 'mapbox-gl';
 import ReactMapboxGl, { Marker } from 'react-mapbox-gl';
 import PlaceIcon from '@material-ui/icons/Place';
 
@@ -11,16 +10,12 @@ const Map = ReactMapboxGl({
   interactive: false,
 });
 
-class LocationPicker extends Component<any, any> {
+class StaticMap extends Component<any, any> {
   map: any;
   mapContainer: any;
 
-  onClick(map: MapboxGL.Map, evt: MapboxGL.MapMouseEvent) {
-    this.props.onSelectLocation(evt.lngLat)
-  }
-
   render() {
-    const { markerLocation, center, interactive = true } = this.props
+    const { markerLocation, center } = this.props
     return (
       <Map
         style={'mapbox://styles/mapbox/streets-v9'}
@@ -29,7 +24,7 @@ class LocationPicker extends Component<any, any> {
           height: "100%",
         }}
         center={center}
-        onClick={(map, evt) => this.onClick(map, evt as any)}
+        zoom={[16]}
       >
         {markerLocation && <Marker
           coordinates={markerLocation}
@@ -41,4 +36,4 @@ class LocationPicker extends Component<any, any> {
   }
 }
 
-export default LocationPicker;
+export default StaticMap;

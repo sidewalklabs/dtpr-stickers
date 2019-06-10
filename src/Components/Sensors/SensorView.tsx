@@ -21,12 +21,24 @@ const styles = (theme: Theme) => createStyles({
       maxWidth: theme.breakpoints.values.md,
     },
   },
+  toolbar: {
+    flexWrap: 'wrap',
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column',
+      alignItems: 'start'
+    },
+  },
   toolbarRight: {
     flex: 1,
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    flexWrap: 'wrap',
   },
   backButton: {
+    borderRadius: '20px',
+    flexShrink: 0
+  },
+  backButtonIcon: {
     marginRight: theme.spacing.unit,
   },
   header: {
@@ -232,10 +244,10 @@ class SensorView extends Component<any, State> {
     const hasfooter = phone || chat || email || onsiteStaff
     return (
       <div className={classes.root}>
-        <Toolbar>
-          {placeId && parentPlaceName && <Button href={`/places/${placeId}`} color='primary'>
-            <BackIcon className={classes.backButton} fontSize="small" />
-            See all sensors at {parentPlaceName}
+        <Toolbar className={classes.toolbar}>
+          {placeId && parentPlaceName && <Button className={classes.backButton} href={`/places/${placeId}`} color='primary' variant='outlined'>
+            <BackIcon className={classes.backButtonIcon} fontSize="small" />
+            {parentPlaceName}
           </Button>}
           {isAdmin && <div className={classes.toolbarRight}>
             <Button href={`/sensors/${sensorId}/print`} color='primary'>
