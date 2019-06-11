@@ -398,11 +398,11 @@ class SensorForm extends React.Component<Props, State> {
   handleSubmit() {
     const { currentUser } = firebase.auth()
     var userId = currentUser && currentUser.uid;
-    if (userId) {
-      const { sensorId, sensorData } = this.state
-      const newSensorData = { ...sensorData, uid: userId }
+    const { sensorId, sensorData } = this.state
+
+    if (userId && sensorId) {
       const updates: { [key: string]: any } = {};
-      updates['/sensors/' + sensorId] = newSensorData;
+      updates['/sensors/' + sensorId] = sensorData;
       if (sensorData.placeId) {
         updates[`places/${sensorData.placeId}/sensors/${sensorId}`] = true;
       }
