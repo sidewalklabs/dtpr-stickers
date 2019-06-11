@@ -36,7 +36,7 @@ class CreateSensorForm extends React.Component<CreateSensorFormProps, CreateSens
     if (!sensorId) return null
 
     return <SensorForm
-      sensorId={shortid.generate()}
+      sensorId={sensorId}
       name=''
       placeId={this.props.placeId}
       headline=''
