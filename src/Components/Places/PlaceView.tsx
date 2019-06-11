@@ -79,7 +79,7 @@ class PlaceView extends Component<any, PlaceViewState> {
   async componentDidMount() {
     const { placeId } = this.props.match.params
     const placesRef = firebase.database().ref(`places/${placeId}`);
-    placesRef.on('value', (snapshot) => {
+    placesRef.once('value', (snapshot) => {
       if (snapshot) {
         let place: PlaceData | null = snapshot.val() || {};
 
