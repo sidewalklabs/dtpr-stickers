@@ -15,7 +15,6 @@ export type TableName =
 
 export interface Option {
   name: string;
-  icon: string;
   iconShortname: string;
   description: string;
 }
@@ -35,11 +34,8 @@ export async function getAirtableOptionsForTable(tableName: TableName): Promise<
   return new Promise<Option[]>(function (resolve, reject) {
     base(tableName).select().eachPage(function page(records: Array<any>, fetchNextPage: () => void) {
       records.forEach((record) => {
-        const icon = record.get('Icon SVG')
-        const iconUrl = icon ? icon[0].url : ''
         const option: Option = {
           name: record.get('Name'),
-          icon: iconUrl,
           description: record.get('Description'),
           iconShortname: record.get('Icon Shortname'),
         }

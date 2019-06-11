@@ -16,13 +16,12 @@ export interface PlaceData {
 
 class Places extends Component<any, any> {
   render() {
-    const { uid } = this.props
     return (
       <Switch>
-        <Route exact path='/' render={(props) => <PlaceList key={uid} {...props} uid={uid} />} />
-        <Route path='/places/new' render={(props) => <CreatePlaceView key={uid} {...props} uid={uid} />} />
-        <Route path='/places/:placeId/edit' render={(props) => <EditPlaceView key={uid} {...props} uid={uid} />} />
-        <Route path='/places/:placeId' render={(props) => <PlaceView key={uid} {...props} uid={uid} />} />
+        <Route exact path='/' component={PlaceList} />} />
+        <Route path='/places/new' component={CreatePlaceView} />
+        <Route path='/places/:placeId/edit' component={EditPlaceView} />
+        <Route path='/places/:placeId' component={PlaceView} />
       </Switch>
     );
   }

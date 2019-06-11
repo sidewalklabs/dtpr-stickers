@@ -51,7 +51,9 @@ class PlaceList extends Component<any, PlaceListState> {
   }
 
   componentDidMount() {
-    const { uid } = this.props
+    const currentUser = firebase.auth().currentUser
+    if (!currentUser) return null
+    const { uid } = currentUser
     const placesRef = firebase.database().ref(`/users/${uid}/places`);
     placesRef.on('value', (snapshot) => {
       if (snapshot) {

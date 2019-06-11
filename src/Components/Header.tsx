@@ -2,13 +2,24 @@ import firebase from '../firebase.js';
 import React, { Component } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
-import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
-class Header extends Component<any, any> {
+interface Props extends WithStyles<typeof styles> {
+  loading: boolean,
+  isSignedIn: boolean,
+  email?: string | null,
+  displayName?: string | null,
+  photoURL?: string,
+}
+
+class Header extends Component<Props, any> {
   render() {
-    const { isSignedIn, loading, classes } = this.props
+    const { isSignedIn, loading, classes, email, displayName, photoURL } = this.props
     return (
       <AppBar className={classes.root} position="sticky">
         <Toolbar>
@@ -25,13 +36,12 @@ class Header extends Component<any, any> {
                 Login
               </Typography>
             </Button>}
-            {!loading && isSignedIn && (
-              <Button onClick={() => firebase.auth().signOut()} color="inherit" disableFocusRipple disableRipple style={{ backgroundColor: 'transparent' }}>
-                <Typography color="inherit" style={{ textTransform: 'none' }}>
-                  Sign Out
-                </Typography>
-              </Button>
-            )}
+            {!loading && isSignedIn && <Tooltip title={`Sign out ${displayName} ${email}`}>
+              <IconButton onClick={() => firebase.auth().signOut()} >
+                {photoURL && <Avatar alt={displayName || ''} src={photoURL} />}
+                {!photoURL && displayName && <Avatar alt={displayName}>{displayName.charAt(0)}</Avatar>}
+              </IconButton>
+            </Tooltip>}
           </div>
         </Toolbar>
       </AppBar>

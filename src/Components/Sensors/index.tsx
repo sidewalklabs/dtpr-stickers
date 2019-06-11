@@ -28,12 +28,11 @@ export interface SensorData {
 
 class Sensors extends Component<any, any> {
   render() {
-    const { uid } = this.props
     return (
       <Switch>
-        <Route path={`/sensors/:sensorId/print`} render={(props) => <SensorPrintView key={uid} {...props} />} />
-        <Route path={`/sensors/:sensorId/edit`} render={(props) => <EditSensorForm key={uid} {...props} />} />
-        <Route path={`/sensors/:sensorId`} render={(props) => <SensorView key={uid} {...props} />} />
+        <Route path={`/sensors/:sensorId/print`} component={SensorPrintView} />
+        <Route path={`/sensors/:sensorId/edit`} component={EditSensorForm} />
+        <Route path={`/sensors/:sensorId`} component={SensorView} />
       </Switch>
     );
   }

@@ -31,29 +31,25 @@ class EditPlaceView extends React.Component<any, EditPlaceViewState> {
   }
 
   async componentDidMount() {
-    const { uid } = this.props
+    const user = firebase.auth().currentUser
     const { placeId } = this.props.match.params
-    if (!placeId) this.setState({ isLoading: false })
-
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user && placeId) {
-        const placeRef = firebase.database().ref(`places/${placeId}`)
-        placeRef.on('value', (snapshot) => {
-          if (snapshot) {
-            const item = snapshot.val();
-            const { name, lngLat, sensors = {}, admins } = item
-            if (!admins || !admins[uid]) {
-              this.setState({ isLoading: false, allowAccess: false })
-            }
-            this.setState({ placeId, name, lngLat, sensors: sensors, isLoading: false });
-          } else {
-            this.setState({ isLoading: false });
+    if (user && placeId) {
+      const placeRef = firebase.database().ref(`places/${placeId}`)
+      placeRef.on('value', (snapshot) => {
+        if (snapshot) {
+          const item = snapshot.val();
+          const { name, lngLat, sensors = {}, admins } = item
+          if (!admins || !admins[user.uid]) {
+            this.setState({ isLoading: false, allowAccess: false })
           }
-        });
-      } else {
-        this.setState({ isLoading: false, allowAccess: false })
-      }
-    })
+          this.setState({ placeId, name, lngLat, sensors: sensors, isLoading: false });
+        } else {
+          this.setState({ isLoading: false });
+        }
+      });
+    } else {
+      this.setState({ isLoading: false, allowAccess: false })
+    }
   }
 
   render() {
@@ -68,7 +64,6 @@ class EditPlaceView extends React.Component<any, EditPlaceViewState> {
       name={name}
       lngLat={lngLat}
       sensors={sensors}
-      uid={this.props.uid}
       onSave={(id: string) => this.props.history.push(`/places/${placeId}`)} />
   }
 }

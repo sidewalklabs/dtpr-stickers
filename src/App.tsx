@@ -42,6 +42,7 @@ interface State {
   uid?: string | null,
   email?: string | null,
   displayName?: string | null,
+  photoURL?: string | null,
 }
 
 class App extends Component<any, State> {
@@ -51,13 +52,14 @@ class App extends Component<any, State> {
     uid: undefined,
     email: undefined,
     displayName: undefined,
+    photoURL: undefined,
   };
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged(
       (user) => {
-        const { uid = undefined, email = undefined, displayName = undefined } = user || {}
-        this.setState({ isSignedIn: !!user, uid, email, displayName, loading: false })
+        const { uid = undefined, email = undefined, displayName = undefined, photoURL = undefined } = user || {}
+        this.setState({ isSignedIn: !!user, uid, email, displayName, photoURL, loading: false })
       }
     );
   }
@@ -68,20 +70,19 @@ class App extends Component<any, State> {
   }
 
   render() {
-    const { loading, isSignedIn, uid, email, displayName } = this.state
+    const { loading, isSignedIn, uid, email, displayName, photoURL } = this.state
     const showHeader = isSignedIn || HEADERED_PATHS.includes(window.location.pathname)
-    console.log(this.props)
     return (
       <React.Fragment>
         <MuiThemeProvider theme={theme} >
           <CssBaseline />
-          {showHeader && <Header loading={loading} isSignedIn={isSignedIn} />}
+          {showHeader && <Header loading={loading} isSignedIn={isSignedIn} email={email} displayName={displayName} photoURL={photoURL} />}
           {!loading && <Router>
             <Switch>
-              <Route path="/" exact render={(props) => {
+              <Route key={uid || ''} path="/" exact render={(props) => {
                 this.trackPageView();
                 if (isSignedIn) {
-                  return <Places {...props} key={uid} uid={uid} />
+                  return <Places key={uid} {...props} />
                 } else {
                   return <Home />
                 }
@@ -92,11 +93,11 @@ class App extends Component<any, State> {
               }} />
               <Route path="/places" render={(props) => {
                 this.trackPageView();
-                return <Places {...props} key={uid} uid={uid} />
+                return <Places {...props} />
               }} />
               <Route path="/sensors" render={(props) => {
                 this.trackPageView();
-                return <Sensors {...props} key={uid} uid={uid} />
+                return <Sensors {...props} />
               }} />
               <Route
                 exact

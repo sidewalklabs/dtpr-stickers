@@ -6,8 +6,35 @@ interface CreateSensorFormProps {
   placeId: string;
 }
 
-class CreateSensorForm extends React.Component<CreateSensorFormProps, any> {
+interface CreateSensorFormState {
+  sensorId?: string;
+}
+
+class CreateSensorForm extends React.Component<CreateSensorFormProps, CreateSensorFormState> {
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      sensorId: undefined
+    };
+  }
+
+  componentDidMount() {
+    let sensorId = shortid.generate()
+
+    // 307 is a reserved preface we used for an intial set of hard-coded human-readable sensor ids
+    // disallow future ids that begin with 307 in order to avoid collisions
+    while (sensorId.indexOf('307') === 0) {
+      sensorId = shortid.generate()
+    }
+    this.setState({ sensorId })
+  }
+
   render() {
+    const { sensorId } = this.state
+
+    if (!sensorId) return null
+
     return <SensorForm
       sensorId={shortid.generate()}
       name=''

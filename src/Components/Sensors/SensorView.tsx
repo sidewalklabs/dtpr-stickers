@@ -190,13 +190,12 @@ class SensorView extends Component<any, State> {
                 const place: PlaceData | null = snapshot.val();
                 if (place) {
                   this.setState({ parentPlaceName: place.name })
-                  firebase.auth().onAuthStateChanged(
-                    (user) => {
-                      const uid = user && user.uid
-                      const isAdmin = (uid && place.admins && place.admins[uid]) || false
-                      this.setState({ isAdmin })
-                    }
-                  );
+                  const user = firebase.auth().currentUser
+                  if (user) {
+                    const { uid } = user
+                    const isAdmin = (uid && place.admins && place.admins[uid]) || false
+                    this.setState({ isAdmin })
+                  }
                 }
               }
             })
@@ -265,15 +264,15 @@ class SensorView extends Component<any, State> {
         <Divider variant='fullWidth' />
         <div className={classes.summaryWrapper}>
           {purposeBadgeOption && <div className={classes.summaryCell}>
-            <img className={classes.summaryBadge} src={purposeBadgeOption.icon}></img>
+            <img className={classes.summaryBadge} src={`/images/${purposeBadgeOption.iconShortname}.svg`}></img>
             <Typography variant="subtitle2">{purposeBadgeOption.name}</Typography>
           </div>}
           {techTypeBadgeOption && <div className={classes.summaryCell}>
-            <img className={classes.summaryBadge} src={techTypeBadgeOption.icon}></img>
+            <img className={classes.summaryBadge} src={`/images/${techTypeBadgeOption.iconShortname}.svg`}></img>
             <Typography variant="subtitle2">{techTypeBadgeOption.name}</Typography>
           </div>}
           {accountableBadgeOption && <div className={classes.summaryCell}>
-            <img className={classes.summaryBadge} src={logoSrc || accountableBadgeOption.icon}></img>
+            <img className={classes.summaryBadge} src={logoSrc || `/images/${accountableBadgeOption.iconShortname}.svg`}></img>
             <Typography variant="subtitle2">{accountable}</Typography>
           </div>}
         </div>
@@ -283,36 +282,36 @@ class SensorView extends Component<any, State> {
           {description && <Typography align='center' paragraph>{description}</Typography>}
         </div>
         {airtableData && <div>
-          {accountable && accountableDescription && <Accordian icon={airtableData.accountable[0].icon} title={accountable} label='Accountability' body={accountableDescription} />}
+          {accountableBadgeOption && accountableDescription && <Accordian icon={`/images/${accountableBadgeOption.iconShortname}.svg`} title={accountable} label='Accountability' body={accountableDescription} />}
           {purpose && purpose.map(name => {
             const option = airtableData.purpose.find((airtableOption) => airtableOption.name === name)
             if (!option) return null;
-            return <Accordian key={option.name} icon={option.icon} title={option.name} label='Purpose' body={option.description} />
+            return <Accordian key={option.name} icon={`/images/${option.iconShortname}.svg`} title={option.name} label='Purpose' body={option.description} />
           })}
           {techType && techType.map(name => {
             const option = airtableData.techType.find((airtableOption) => airtableOption.name === name)
             if (!option) return null;
-            return <Accordian key={option.name} icon={option.icon} title={option.name} label='Technology Type' body={option.description} />
+            return <Accordian key={option.name} icon={`/images/${option.iconShortname}.svg`} title={option.name} label='Technology Type' body={option.description} />
           })}
           {dataType && dataType.map(name => {
             const option = airtableData.dataType.find((airtableOption) => airtableOption.name === name)
             if (!option) return null;
-            return <Accordian key={option.name} icon={option.icon} title={option.name} label='Data Type' body={option.description} />
+            return <Accordian key={option.name} icon={`/images/${option.iconShortname}.svg`} title={option.name} label='Data Type' body={option.description} />
           })}
           {dataProcess && dataProcess.map(name => {
             const option = airtableData.dataType.find((airtableOption) => airtableOption.name === name)
             if (!option) return null;
-            return <Accordian key={option.name} icon={option.icon} title={option.name} label='Data Processing' body={option.description} />
+            return <Accordian key={option.name} icon={`/images/${option.iconShortname}.svg`} title={option.name} label='Data Processing' body={option.description} />
           })}
           {access && access.map(name => {
             const option = airtableData.access.find((airtableOption) => airtableOption.name === name)
             if (!option) return null;
-            return <Accordian key={option.name} icon={option.icon} title={option.name} label='Access' body={option.description} />
+            return <Accordian key={option.name} icon={`/images/${option.iconShortname}.svg`} title={option.name} label='Access' body={option.description} />
           })}
           {storage && storage.map(name => {
             const option = airtableData.storage.find((airtableOption) => airtableOption.name === name)
             if (!option) return null;
-            return <Accordian key={option.name} icon={option.icon} title={option.name} label='Storage' body={option.description} />
+            return <Accordian key={option.name} icon={`/images/${option.iconShortname}.svg`} title={option.name} label='Storage' body={option.description} />
           })}
         </div>}
         {hasfooter && <div className={classes.footer}>

@@ -129,7 +129,8 @@ class PlaceView extends Component<any, PlaceViewState> {
     const { name, lngLat = {} } = place
     const markerLocation = lngLat ? Object.values(lngLat).reverse() : undefined
 
-    const userHasAccess = place.admins && place.admins[this.props.uid]
+    const currentUser = firebase.auth().currentUser
+    const userHasAccess = currentUser && place.admins && place.admins[currentUser.uid]
     return (
       <div className={classes.root}>
         <div>

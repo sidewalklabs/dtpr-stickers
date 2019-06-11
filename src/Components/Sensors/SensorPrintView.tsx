@@ -14,12 +14,11 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
-// Placeholders
-const WHITE_HEX_URL = '/images/hexes/White.png'
-const OUTLINED_HEX_URL = '/images/container/hexagon.svg'
-const YELLOW_HEX_URL = '/images/hexes/Yellow.png'
-const BLUE_HEX_URL = '/images/hexes/Blue.png'
-const BLACK_HEX_URL = '/images/hexes/Black.png'
+const WHITE_HEX_URL = '/images/hexes/white.svg'
+const OUTLINED_HEX_URL = '/images/hexes/white.svg'
+const YELLOW_HEX_URL = '/images/hexes/yellow.svg'
+const BLUE_HEX_URL = '/images/hexes/blue.svg'
+const BLACK_HEX_URL = '/images/hexes/black.svg'
 
 const styles = (theme: Theme) => createStyles({
   root: {

@@ -10,7 +10,6 @@ import firebase from '../../firebase.js';
 import { PlaceData } from '../Places'
 
 interface PlaceFormProps extends PlaceData, WithStyles<typeof styles> {
-  uid: string;
   id: string;
   title: string;
   onSave(id: string): void;
@@ -29,8 +28,10 @@ class PlaceForm extends React.Component<PlaceFormProps, PlaceData> {
   }
 
   handleSubmit() {
-    const { id, uid } = this.props
-    if (id && uid) {
+    const user = firebase.auth().currentUser
+    const { id } = this.props
+    if (id && user) {
+      const { uid } = user
       const { name, lngLat, sensors, admins } = this.state
       const newPlaceData = { name, lngLat, sensors, admins: { ...admins, [uid]: true } }
       const updates: { [key: string]: any } = {};
@@ -49,7 +50,7 @@ class PlaceForm extends React.Component<PlaceFormProps, PlaceData> {
   }
 
   render() {
-    const { id, uid, classes, title } = this.props
+    const { classes, title } = this.props
     const { name, lngLat } = this.state
     return (
       <div className={classes.root}>
