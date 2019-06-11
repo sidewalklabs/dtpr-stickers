@@ -1,8 +1,8 @@
+import React, { Component } from 'react';
 import firebase from '../firebase.js';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebaseui from 'firebaseui'
-
-import React, { Component } from 'react';
+import { Redirect } from "react-router-dom";
 
 const uiConfig = {
   signInFlow: 'popup',
@@ -23,22 +23,9 @@ const uiConfig = {
 };
 
 class Authentication extends Component<any, any> {
-  state = {
-    isSignedIn: false
-  };
-
-  componentDidMount() {
-    firebase.auth().onAuthStateChanged(
-      (user) => {
-        this.setState({ isSignedIn: !!user })
-      }
-    );
-  }
-
   render() {
     const firebaseAuth = firebase.auth()
-
-    if (this.state.isSignedIn) return null
+    if (firebaseAuth.currentUser) return <Redirect to='/' />
 
     return (
       <div>

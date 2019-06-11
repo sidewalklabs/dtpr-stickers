@@ -28,9 +28,6 @@ const styles = (theme: Theme) => createStyles({
       paddingRight: theme.spacing.unit * 4,
     },
   },
-  cardActionArea: {
-    minHeight: '50px',
-  },
   cardContent: {
     display: 'flex',
     flexDirection: 'column',
@@ -51,7 +48,10 @@ const styles = (theme: Theme) => createStyles({
   staticMap: {
     marginBottom: theme.spacing.unit * 2,
     width: '100%',
-    height: '200px'
+    height: '100px',
+    [theme.breakpoints.up('md')]: {
+      height: '300px'
+    },
   }
 });
 
@@ -127,26 +127,26 @@ class PlaceView extends Component<any, PlaceViewState> {
     if (!place) return <Typography>Hmm can't seem to find that place :/</Typography>
 
     const { name, lngLat = {} } = place
-    const markerLocation = lngLat ? Object.values(lngLat).reverse() : undefined
+    const markerLocation = lngLat ? Object.values(lngLat).reverse() as [number, number] : undefined
 
     const currentUser = firebase.auth().currentUser
     const userHasAccess = currentUser && place.admins && place.admins[currentUser.uid]
     return (
       <div className={classes.root}>
         <div>
-          <Typography gutterBottom variant="h4" component="h2">{name}&nbsp;
+          <Typography gutterBottom variant="h6">{name}&nbsp;
             {userHasAccess && <IconButton href={`/places/${placeId}/edit`} aria-label="Edit">
-              <EditIcon />
+              <EditIcon fontSize='small' />
             </IconButton>}
           </Typography>
         </div>
-        <div className={classes.staticMap}>
-          {lngLat && <StaticMap
+        {markerLocation && <div className={classes.staticMap}>
+          <StaticMap
             markerLocation={markerLocation}
             center={markerLocation}
-          />}
-        </div>
-        <Grid container spacing={16}>
+          />
+        </div>}
+        <Grid container spacing={8}>
           {sensorDataList && Object.keys(sensorDataList).map((id) => {
             const sensor = sensorDataList[id]
             const { name, purpose } = sensor
@@ -159,10 +159,10 @@ class PlaceView extends Component<any, PlaceViewState> {
             return (
               <Grid key={id} item xs={4} sm={3}>
                 <Card className={classes.card} elevation={0}>
-                  <CardActionArea className={classes.cardActionArea} href={`/sensors/${id}`}>
+                  <CardActionArea href={`/sensors/${id}`}>
                     <CardContent className={classes.cardContent}>
                       {icon && <img className={classes.cardIcon} src={icon} />}
-                      <Typography variant="body2" align='center'>
+                      <Typography variant="subtitle2" align='center'>
                         {name}
                       </Typography>
                     </CardContent>

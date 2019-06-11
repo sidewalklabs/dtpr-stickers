@@ -64,7 +64,7 @@ class PlaceForm extends React.Component<PlaceFormProps, PlaceData> {
         <div className={classes.locationPicker}>
           <LocationPicker
             onSelectLocation={(lngLat: MapboxGL.LngLat) => this.setState({ lngLat })}
-            markerLocation={Object.values(lngLat)}
+            markerLocation={Object.values(lngLat) as [number, number]}
           />
         </div>
         <Button onClick={() => this.handleSubmit()}>Save</Button>

@@ -48,6 +48,7 @@ class EditSensorForm extends React.Component<any, State> {
   }
 
   async componentDidMount() {
+    const user = firebase.auth().currentUser
     const { sensorId } = this.props.match.params
     const sensorRef = firebase.database().ref(`sensors/${sensorId}`);
     sensorRef.on('value', (snapshot) => {
@@ -57,80 +58,38 @@ class EditSensorForm extends React.Component<any, State> {
           this.setState({ isLoading: false })
         } else {
           // Some of these fields may not exist for that object, so set a default val
-          const {
-            name = '',
-            placeId = '',
-            headline = '',
-            description = '',
-            accountable = '',
-            accountableDescription = '',
-            purpose = [],
-            techType = [],
-            dataType = [],
-            dataProcess = [],
-            access = [],
-            storage = [],
-            phone = '',
-            chat = '',
-            email = '',
-            onsiteStaff = false,
-            logoRef = '',
-            sensorImageRef = '',
-          } = sensorData
           this.setState({
             sensorData: {
-              name,
-              placeId,
-              headline,
-              description,
-              accountable,
-              accountableDescription,
-              purpose,
-              techType,
-              dataType,
-              dataProcess,
-              access,
-              storage,
-              phone,
-              chat,
-              email,
-              onsiteStaff,
-              logoRef,
-              sensorImageRef,
+              name: sensorData.name || '',
+              placeId: sensorData.placeId || '',
+              headline: sensorData.headline || '',
+              description: sensorData.description || '',
+              accountable: sensorData.accountable || '',
+              accountableDescription: sensorData.accountableDescription || '',
+              purpose: sensorData.purpose || [],
+              techType: sensorData.techType || [],
+              dataType: sensorData.dataType || [],
+              dataProcess: sensorData.dataProcess || [],
+              access: sensorData.access || [],
+              storage: sensorData.storage || [],
+              phone: sensorData.phone || '',
+              chat: sensorData.chat || '',
+              email: sensorData.email || '',
+              onsiteStaff: sensorData.onsiteStaff || false,
+              logoRef: sensorData.logoRef || '',
+              sensorImageRef: sensorData.sensorImageRef || '',
             },
             isLoading: false,
           });
 
-          if (sensorImageRef) {
-            const storageRef = firebase.storage().ref();
-            storageRef.child(sensorImageRef).getDownloadURL().then((sensorImageSrc) => {
-              this.setState({ sensorImageSrc })
-            }).catch(function (error) {
-              console.log(error)
-            });
-          }
-
-          if (logoRef) {
-            const storageRef = firebase.storage().ref();
-            storageRef.child(logoRef).getDownloadURL().then((logoSrc) => {
-              this.setState({ logoSrc })
-            }).catch(function (error) {
-              console.log(error)
-            });
-          }
-
-          if (placeId) {
-            firebase.database().ref(`places/${placeId}`).once('value', (snapshot) => {
+          if (user && sensorData.placeId) {
+            firebase.database().ref(`places/${sensorData.placeId}`).once('value', (snapshot) => {
               if (snapshot) {
                 const place: PlaceData | null = snapshot.val();
                 if (place) {
-                  firebase.auth().onAuthStateChanged(
-                    (user) => {
-                      const uid = user && user.uid
-                      const allowAccess = (uid && place.admins && place.admins[uid]) || false
-                      this.setState({ allowAccess })
-                    }
-                  );
+                  const { uid } = user
+                  const allowAccess = (uid && place.admins && place.admins[uid]) || false
+                  this.setState({ allowAccess })
                 }
               }
             })
@@ -143,7 +102,7 @@ class EditSensorForm extends React.Component<any, State> {
   render() {
     const { classes, match } = this.props
     const { sensorId } = match.params
-    const { isLoading, allowAccess, sensorData, sensorImageSrc, logoSrc } = this.state
+    const { isLoading, allowAccess, sensorData } = this.state
 
     if (isLoading) return <LinearProgress color="secondary" />
     if (!allowAccess) return <Redirect to={`/sensors/${sensorId}/`} />
@@ -152,26 +111,7 @@ class EditSensorForm extends React.Component<any, State> {
     return <div className={classes.root}>
       <SensorForm
         sensorId={sensorId}
-        name={sensorData.name}
-        placeId={sensorData.placeId}
-        headline={sensorData.headline}
-        description={sensorData.description}
-        accountable={sensorData.accountable}
-        accountableDescription={sensorData.accountableDescription}
-        purpose={sensorData.purpose}
-        techType={sensorData.techType}
-        dataType={sensorData.dataType}
-        dataProcess={sensorData.dataProcess}
-        access={sensorData.access}
-        storage={sensorData.storage}
-        phone={sensorData.phone}
-        chat={sensorData.chat}
-        email={sensorData.email}
-        onsiteStaff={sensorData.onsiteStaff}
-        logoRef={sensorData.logoRef}
-        sensorImageRef={sensorData.sensorImageRef}
-        sensorImageSrc={sensorImageSrc}
-        logoSrc={logoSrc}
+        sensorData={sensorData}
       />
     </div>
   }

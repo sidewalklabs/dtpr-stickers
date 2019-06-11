@@ -8,10 +8,14 @@ const ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN || '';
 const Map = ReactMapboxGl({
   accessToken: ACCESS_TOKEN,
   injectCSS: false,
-  interactive: false,
 });
 
-class LocationPicker extends Component<any, any> {
+interface Props {
+  markerLocation?: [number, number];
+  onSelectLocation: (location: MapboxGL.LngLat) => void
+}
+
+class LocationPicker extends Component<Props, any> {
   map: any;
   mapContainer: any;
 
@@ -20,15 +24,15 @@ class LocationPicker extends Component<any, any> {
   }
 
   render() {
-    const { markerLocation, center, interactive = true } = this.props
+    const { markerLocation } = this.props
     return (
       <Map
-        style={'mapbox://styles/mapbox/streets-v9'}
+        style={'mapbox://styles/lope/cjws7757q0ase1cn2blgpu7hy'}
         containerStyle={{
           width: "100%",
           height: "100%",
         }}
-        center={center}
+        center={markerLocation}
         onClick={(map, evt) => this.onClick(map, evt as any)}
       >
         {markerLocation && <Marker

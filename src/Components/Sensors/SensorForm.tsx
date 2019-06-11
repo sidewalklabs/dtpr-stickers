@@ -22,10 +22,9 @@ import { SensorData } from './index'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import firebase from '../../firebase.js';
 
-interface Props extends SensorData, WithStyles<typeof styles>, RouteComponentProps {
+interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   sensorId: string;
-  sensorImageSrc?: string,
-  logoSrc?: string,
+  sensorData: SensorData
 }
 
 interface State {
@@ -47,38 +46,38 @@ class SensorForm extends React.Component<Props, State> {
     super(props);
     this.state = {
       activeStep: 0,
-      logoPreviewSrc: props.logoSrc,
-      sensorImagePreviewSrc: props.sensorImageSrc,
+      logoPreviewSrc: undefined,
+      sensorImagePreviewSrc: undefined,
       sensorId: props.sensorId,
       logoUploadProgress: 101,
       sensorImageUploadProgress: 101,
       airtableData: undefined,
-      sensorData: {
-        name: props.name,
-        placeId: props.placeId,
-        headline: props.headline,
-        description: props.description,
-        accountable: props.accountable,
-        accountableDescription: props.accountableDescription,
-        purpose: props.purpose,
-        techType: props.techType,
-        dataType: props.dataType,
-        dataProcess: props.dataProcess,
-        access: props.access,
-        storage: props.storage,
-        phone: props.phone,
-        chat: props.chat,
-        email: props.email,
-        onsiteStaff: props.onsiteStaff,
-        logoRef: props.logoRef,
-        sensorImageRef: props.sensorImageRef,
-      },
+      sensorData: props.sensorData,
     };
   }
 
   async componentDidMount() {
+    const { sensorData } = this.props
     const airtableData = await getAirtableData()
     this.setState({ airtableData })
+
+    if (sensorData.sensorImageRef) {
+      const storageRef = firebase.storage().ref();
+      storageRef.child(sensorData.sensorImageRef).getDownloadURL().then((sensorImagePreviewSrc) => {
+        this.setState({ sensorImagePreviewSrc })
+      }).catch(function (error) {
+        console.log(error)
+      });
+    }
+
+    if (sensorData.logoRef) {
+      const storageRef = firebase.storage().ref();
+      storageRef.child(sensorData.logoRef).getDownloadURL().then((logoPreviewSrc) => {
+        this.setState({ logoPreviewSrc })
+      }).catch(function (error) {
+        console.log(error)
+      });
+    }
   }
 
   getSteps() {

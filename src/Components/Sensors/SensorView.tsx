@@ -46,7 +46,7 @@ const styles = (theme: Theme) => createStyles({
     textAlign: 'center',
   },
   content: {
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing.unit * 2,
   },
   footer: {
     background: theme.palette.grey["200"],
@@ -55,7 +55,7 @@ const styles = (theme: Theme) => createStyles({
   },
   summaryWrapper: {
     display: 'flex',
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing.unit * 2,
   },
   summaryCell: {
     flex: 1,
@@ -244,22 +244,23 @@ class SensorView extends Component<any, State> {
     return (
       <div className={classes.root}>
         <Toolbar className={classes.toolbar}>
-          {placeId && parentPlaceName && <Button className={classes.backButton} href={`/places/${placeId}`} color='primary' variant='outlined'>
+          {placeId && parentPlaceName && <Button className={classes.backButton} href={`/places/${placeId}`} color='primary' variant='outlined' size='small'>
             <BackIcon className={classes.backButtonIcon} fontSize="small" />
             {parentPlaceName}
           </Button>}
           {isAdmin && <div className={classes.toolbarRight}>
-            <Button href={`/sensors/${sensorId}/print`} color='primary'>
+            <Button href={`/sensors/${sensorId}/print`} color='primary' size='small'>
               Try the Sticker Maker
             </Button>
-            <Button href={`/sensors/${sensorId}/edit`} color='primary' variant='contained'>
+            <Button href={`/sensors/${sensorId}/edit`} color='primary' variant='contained' size='small'>
               Edit
             </Button>
           </div>}
         </Toolbar>
         <div className={classes.header}>
-          {headline && <Typography gutterBottom variant="h4" component="h2" align='center' style={{ wordBreak: 'break-word' }}>{headline}</Typography>}
-
+          {headline && <Typography gutterBottom variant="h6" align='center' style={{ wordBreak: 'break-word', fontWeight: 'bold' }}>
+            {headline}
+          </Typography>}
         </div>
         <Divider variant='fullWidth' />
         <div className={classes.summaryWrapper}>
@@ -279,7 +280,7 @@ class SensorView extends Component<any, State> {
         <Divider variant='fullWidth' />
         <div className={classes.content}>
           {sensorImageSrc && <img className={classes.sensorImage} src={sensorImageSrc}></img>}
-          {description && <Typography align='center' paragraph>{description}</Typography>}
+          {description && <Typography paragraph>{description}</Typography>}
         </div>
         {airtableData && <div>
           {accountableBadgeOption && accountableDescription && <Accordian icon={`/images/${accountableBadgeOption.iconShortname}.svg`} title={accountable} label='Accountability' body={accountableDescription} />}

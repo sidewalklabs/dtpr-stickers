@@ -38,8 +38,9 @@ class Header extends Component<Props, any> {
             </Button>}
             {!loading && isSignedIn && <Tooltip title={`Sign out ${displayName} ${email}`}>
               <IconButton onClick={() => firebase.auth().signOut()} >
-                {photoURL && <Avatar alt={displayName || ''} src={photoURL} />}
-                {!photoURL && displayName && <Avatar alt={displayName}>{displayName.charAt(0)}</Avatar>}
+                <Avatar alt={displayName || ''} src={photoURL || undefined} className={classes.avatar}>
+                  {!photoURL && displayName && displayName.charAt(0)}
+                </Avatar>
               </IconButton>
             </Tooltip>}
           </div>
@@ -58,6 +59,10 @@ const styles = (theme: Theme) => createStyles({
       display: 'none',
     },
   },
+  avatar: {
+    width: theme.spacing.unit * 4,
+    height: theme.spacing.unit * 4
+  }
 });
 
 export default withStyles(styles)(Header);

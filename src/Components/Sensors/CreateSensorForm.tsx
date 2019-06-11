@@ -35,26 +35,30 @@ class CreateSensorForm extends React.Component<CreateSensorFormProps, CreateSens
 
     if (!sensorId) return null
 
+    const sensorData = {
+      name: '',
+      placeId: this.props.placeId,
+      headline: '',
+      description: '',
+      accountable: '',
+      accountableDescription: '',
+      purpose: [],
+      techType: [],
+      dataType: [],
+      dataProcess: [],
+      access: [],
+      storage: [],
+      phone: '',
+      chat: '',
+      email: '',
+      onsiteStaff: false,
+      logoRef: '',
+      sensorImageRef: '',
+    }
+
     return <SensorForm
       sensorId={sensorId}
-      name=''
-      placeId={this.props.placeId}
-      headline=''
-      description=''
-      accountable=''
-      accountableDescription=''
-      purpose={[]}
-      techType={[]}
-      dataType={[]}
-      dataProcess={[]}
-      access={[]}
-      storage={[]}
-      phone=''
-      chat=''
-      email=''
-      onsiteStaff={false}
-      logoRef=''
-      sensorImageRef=''
+      sensorData={sensorData}
     />
   }
 }
