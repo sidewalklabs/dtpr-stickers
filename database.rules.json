@@ -19,7 +19,7 @@
     "sensors": {
       "$sensorId": {
         ".read": true,
-        ".write": "!data.exists() || root.child('places/'+ newData.child('placeID').val()).child('admins').child(auth.uid).exists()",
+        ".write": "!data.exists() || root.child('places').child(newData.child('placeId').val()).child('admins').child(auth.uid).exists()",
       }
     }
   }
