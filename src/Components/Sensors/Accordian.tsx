@@ -1,16 +1,17 @@
-import React, { Component } from 'react';
-import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import showdown from 'showdown';
+import React, { Component } from "react";
+import { createStyles, withStyles, Theme } from "@material-ui/core/styles";
+import { Typography } from "@material-ui/core";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import showdown from "showdown";
 
 const paragraphTagFilter = {
-  type: 'output',
-  filter: function (text: string, converter: any) {
-    var re = /<\/?p[^>]*>/ig;
-    text = text.replace(re, '');
+  type: "output",
+  filter: function(text: string, converter: any) {
+    var re = /<\/?p[^>]*>/gi;
+    text = text.replace(re, "");
     return text;
   }
 };
@@ -24,68 +25,70 @@ const markdownConverter = new showdown.Converter({
   extensions: [paragraphTagFilter]
 });
 
-const styles = (theme: Theme) => createStyles({
-  expansionPanelRoot: {
-    backgroundImage: 'url(/images/chain/middle.svg)',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: '16px 0',
-    boxShadow: 'none',
-    '&:first-of-type': {
-      backgroundImage: 'url(/images/chain/top.svg)',
+const styles = (theme: Theme) =>
+  createStyles({
+    expansionPanelRoot: {
+      backgroundImage: "url(/images/chain/middle.svg)",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "16px 0",
+      boxShadow: "none",
+      "&:first-of-type": {
+        backgroundImage: "url(/images/chain/top.svg)"
+      },
+      "&:last-of-type": {
+        backgroundImage: "url(/images/chain/bottom.svg)"
+      },
+      "&:not(:last-child)": {
+        borderBottom: 0
+      },
+      "&:before": {
+        display: "none"
+      }
     },
-    '&:last-of-type': {
-      backgroundImage: 'url(/images/chain/bottom.svg)',
+    expansionPanelExpanded: {
+      margin: "0"
     },
-    '&:not(:last-child)': {
-      borderBottom: 0,
+    expansionPanelSummaryRoot: {
+      margin: "0",
+      minHeight: "56px",
+      padding: "0 16px 0 16px",
+      "&$expansionPanelSummaryExpanded": {
+        margin: 0,
+        minHeight: "56px"
+      }
     },
-    '&:before': {
-      display: 'none',
+    expansionPanelSummaryContent: {
+      margin: "0",
+      "&>:last-child": {
+        paddingRight: 0
+      },
+      "&$expansionPanelSummaryExpanded": {
+        margin: 0
+      }
     },
-  },
-  expansionPanelExpanded: {
-    margin: '0',
-  },
-  expansionPanelSummaryRoot: {
-    margin: '0',
-    minHeight: '56px',
-    padding: '0 16px 0 16px',
-    '&$expansionPanelSummaryExpanded': {
-      margin: 0,
-      minHeight: '56px',
+    expansionPanelSummaryExpanded: {
+      // class used for expanded key
+      // needed for nested reference
     },
-  },
-  expansionPanelSummaryContent: {
-    margin: '0',
-    '&>:last-child': {
-      paddingRight: 0,
+    expansionPanelDetailsRoot: {
+      borderLeft: "2px solid #000",
+      marginLeft: theme.spacing.unit * 4 + 1,
+      paddingLeft: theme.spacing.unit * 3,
+      paddingTop: 0,
+      paddingRight: theme.spacing.unit * 3,
+      paddingBottom: theme.spacing.unit * 2
     },
-    '&$expansionPanelSummaryExpanded': {
-      margin: 0,
+    heading: {
+      flex: 1,
+      alignSelf: "center",
+      marginLeft: theme.spacing.unit
     },
-  },
-  expansionPanelSummaryExpanded: {
-    // class used for expanded key
-    // needed for nested reference
-  },
-  expansionPanelDetailsRoot: {
-    borderLeft: '2px solid #000',
-    marginLeft: theme.spacing.unit * 4 + 1,
-    paddingLeft: theme.spacing.unit * 3,
-    paddingTop: 0,
-    paddingRight: theme.spacing.unit * 3,
-    paddingBottom: theme.spacing.unit * 2,
-  },
-  heading: {
-    flex: 1,
-    alignSelf: 'center',
-    marginLeft: theme.spacing.unit
-  },
-  label: {
-    alignSelf: 'center',
-    marginLeft: theme.spacing.unit,
-  },
-});
+    label: {
+      alignSelf: "center",
+      marginLeft: theme.spacing.unit,
+      marginRight: "32px"
+    }
+  });
 
 interface Props {
   readonly classes: any;
@@ -97,17 +100,33 @@ interface Props {
 
 class SensorView extends Component<Props, any> {
   render() {
-    const { classes, icon, title, label, body } = this.props
-    const parsedBody = markdownConverter.makeHtml(body)
+    const { classes, icon, title, label, body } = this.props;
+    const parsedBody = markdownConverter.makeHtml(body);
 
     return (
-      <ExpansionPanel classes={{ root: classes.expansionPanelRoot, expanded: classes.expansionPanelExpanded }}>
-        <ExpansionPanelSummary classes={{ root: classes.expansionPanelSummaryRoot, content: classes.expansionPanelSummaryContent, expanded: classes.expansionPanelSummaryExpanded }}>
-          <img src={icon}></img>
+      <ExpansionPanel
+        classes={{
+          root: classes.expansionPanelRoot,
+          expanded: classes.expansionPanelExpanded
+        }}
+      >
+        <ExpansionPanelSummary
+          classes={{
+            root: classes.expansionPanelSummaryRoot,
+            content: classes.expansionPanelSummaryContent,
+            expanded: classes.expansionPanelSummaryExpanded
+          }}
+          expandIcon={<ExpandMoreIcon />}
+        >
+          <img src={icon} />
           <Typography className={classes.heading}>{title}</Typography>
-          <Typography color='textSecondary' className={classes.label}>{label}</Typography>
+          <Typography color="textSecondary" className={classes.label}>
+            {label}
+          </Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails classes={{ root: classes.expansionPanelDetailsRoot }}>
+        <ExpansionPanelDetails
+          classes={{ root: classes.expansionPanelDetailsRoot }}
+        >
           <Typography dangerouslySetInnerHTML={{ __html: parsedBody }} />
         </ExpansionPanelDetails>
       </ExpansionPanel>
