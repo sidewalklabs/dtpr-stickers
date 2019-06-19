@@ -118,7 +118,6 @@ class PlaceView extends Component<any, PlaceViewState> {
     placesRef.once("value", snapshot => {
       if (snapshot) {
         let place: PlaceData | null = snapshot.val() || {};
-        console.log(place);
 
         if (place) {
           this.setState({
@@ -187,6 +186,7 @@ class PlaceView extends Component<any, PlaceViewState> {
             )}
           </Typography>
           <Typography className={classes.subtitle}>
+            {/* TODO: add address field to places */}
             307 Lakeshore Blvd. E, Toronto ON
           </Typography>
         </div>
@@ -198,6 +198,7 @@ class PlaceView extends Component<any, PlaceViewState> {
             />
           </div>
         )}
+        {/* TODO: Add audio guides and links to events coming up */}
         <Tabs
           className={classes.tabBar}
           value={this.state.tabValue}

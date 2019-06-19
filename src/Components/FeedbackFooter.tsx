@@ -134,6 +134,7 @@ class FeedbackFooter extends Component<Props, any> {
       "Hello, \nI'd like to share my thoughts on " +
       window.document.title +
       "...";
+    // TODO: Make this email address based on account owner
     const mailUrl =
       "mailto:dtpr-hello@sidewalklabs.com?subject=" +
       FeedbackSubject +
