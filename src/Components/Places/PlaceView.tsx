@@ -1,23 +1,25 @@
-import React, { Component } from "react";
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardContent from "@material-ui/core/CardContent";
-import Grid from "@material-ui/core/Grid";
-import { Typography } from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import Fab from "@material-ui/core/Fab";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import { createStyles, withStyles, Theme } from "@material-ui/core/styles";
-import AddIcon from "@material-ui/icons/Add";
-import EditIcon from "@material-ui/icons/Edit";
+import React, { Component } from 'react';
+import AppBar from '@material-ui/core/AppBar';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
+import Grid from '@material-ui/core/Grid';
+import { Typography } from '@material-ui/core';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Fab from '@material-ui/core/Fab';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import firebase from "../../firebase.js";
-import { AirtableData, getAirtableData } from "../../utils/airtable";
-import StaticMap from "../StaticMap";
-import { PlaceData } from "../Places";
-import { SensorData } from "../Sensors";
-import CreateSensorForm from "../Sensors/CreateSensorForm";
+import firebase from '../../firebase.js';
+import { AirtableData, getAirtableData } from '../../utils/airtable'
+import StaticMap from '../StaticMap';
+import { PlaceData } from '../Places'
+import { SensorData } from '../Sensors'
+import CreateSensorForm from '../Sensors/CreateSensorForm'
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -35,6 +37,27 @@ const styles = (theme: Theme) =>
       margin: "8px -16px 16px -16px",
       padding: "0 16px 16px 16px",
       borderBottom: "0.5px solid rgba(0,0,0,0.15)"
+    },
+    adminBar: {
+      top: 'auto',
+      bottom: 0,
+    },
+    addSensorButton: {
+      position: 'absolute',
+      top: 0,
+      left: '50%',
+      transform: 'translate(-50%, -30%)'
+    },
+    addIcon: {
+      marginRight: theme.spacing.unit,
+    },
+    staticMap: {
+      marginBottom: theme.spacing.unit * 2,
+      width: '100%',
+      height: '100px',
+      [theme.breakpoints.up('md')]: {
+        height: '300px'
+      },
     },
     title: {
       fontSize: "20px",
@@ -56,10 +79,10 @@ const styles = (theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      padding: "8px 0 0 0"
+      padding: theme.spacing.unit * 2
     },
     cardIcon: {
-      margin: "16px 0 8px 0",
+      marginBottom: theme.spacing.unit,
       width: "56px",
       height: "56px",
       opacity: 0.7
@@ -69,23 +92,6 @@ const styles = (theme: Theme) =>
       lineHeight: "16px",
       fontWeight: 500
     },
-    addSensorButton: {
-      position: "fixed",
-      bottom: theme.spacing.unit * 2,
-      right: "50%",
-      transform: "translateX(50%)"
-    },
-    addIcon: {
-      marginRight: theme.spacing.unit
-    },
-    staticMap: {
-      marginBottom: theme.spacing.unit * 2,
-      width: "100%",
-      height: "100px",
-      [theme.breakpoints.up("md")]: {
-        height: "300px"
-      }
-    }
   });
 
 interface PlaceViewState {
@@ -163,8 +169,20 @@ class PlaceView extends Component<any, PlaceViewState> {
     const { isLoading, place, airtableData, sensorDataList } = this.state;
 
     if (isLoading) return <LinearProgress color="secondary" />;
-    if (!place)
+    if (!place) {
       return <Typography>Hmm can't seem to find that place :/</Typography>;
+
+    }
+    if (this.state.displayForm) {
+      // TODO: we should move this to its own route, 
+      // but for now we want to make sure we only associate sensors 
+      // with valid places
+      return <Grid item xs={12}>
+        <Card className={classes.card}>
+          <CreateSensorForm placeId={placeId} />
+        </Card>
+      </Grid>
+    }
 
     const { name, lngLat = {} } = place;
     const markerLocation = lngLat
@@ -213,63 +231,57 @@ class PlaceView extends Component<any, PlaceViewState> {
           <Tab label="Questions" className={classes.singleTab} disabled />
           <Tab label="Shortcuts" className={classes.singleTab} disabled />
         </Tabs>
-        <Grid container spacing={8}>
-          {sensorDataList &&
-            Object.keys(sensorDataList).map(id => {
-              const sensor = sensorDataList[id];
-              const { name, purpose } = sensor;
-              const featuredPurpose =
-                purpose && purpose.length ? purpose[0] : undefined;
-              let icon: string | null = null;
-              if (featuredPurpose && airtableData) {
-                const config = airtableData.purpose.find(
-                  option => option.name === featuredPurpose
-                );
-                if (config) icon = `/images/${config.iconShortname}.svg`;
-              }
-              return (
-                <Grid key={id} item xs={4} sm={3}>
-                  <Card className={classes.card} elevation={0}>
-                    <CardActionArea href={`/sensors/${id}`}>
-                      <CardContent className={classes.cardContent}>
-                        {icon && (
-                          <img className={classes.cardIcon} src={icon} />
-                        )}
-                        <Typography
-                          className={classes.cardIconText}
-                          align="center"
-                        >
-                          {name}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </Grid>
+        {sensorDataList && <Grid container spacing={8}>
+          {Object.keys(sensorDataList).map(id => {
+            const sensor = sensorDataList[id];
+            const { name, purpose } = sensor;
+            const featuredPurpose =
+              purpose && purpose.length ? purpose[0] : undefined;
+            let icon: string | null = null;
+            if (featuredPurpose && airtableData) {
+              const config = airtableData.purpose.find(
+                option => option.name === featuredPurpose
               );
-            })}
-          {userHasAccess && !this.state.displayForm && (
-            <Fab
-              variant="extended"
-              aria-label="Add"
-              className={classes.addSensorButton}
-              color="primary"
-              onClick={() => {
-                this.setState({ displayForm: true });
-              }}
-            >
-              <AddIcon className={classes.addIcon} />
-              Add
-            </Fab>
-          )}
-          {this.state.displayForm && (
-            <Grid item xs={12}>
-              <Card className={classes.card}>
-                <CreateSensorForm placeId={placeId} />
-              </Card>
-            </Grid>
-          )}
-        </Grid>
-      </div>
+              if (config) icon = `/images/${config.iconShortname}.svg`;
+            }
+            return (
+              <Grid key={id} item xs={4} sm={3}>
+                <Card className={classes.card} elevation={0}>
+                  <CardActionArea href={`/sensors/${id}`}>
+                    <CardContent className={classes.cardContent}>
+                      {icon && (
+                        <img className={classes.cardIcon} src={icon} />
+                      )}
+                      <Typography
+                        className={classes.cardIconText}
+                        align="center"
+                      >
+                        {name}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>}
+        {userHasAccess && !this.state.displayForm && (
+          <AppBar position='fixed' color='default' className={classes.adminBar} >
+            <Toolbar>
+              <Fab
+                variant="extended"
+                aria-label="Add"
+                className={classes.addSensorButton}
+                color='primary'
+                onClick={() => { this.setState({ displayForm: true }) }}
+              >
+                <AddIcon className={classes.addIcon} />
+                Add
+              </Fab>
+            </Toolbar>
+          </AppBar>
+        )}
+      </div >
     );
   }
 }

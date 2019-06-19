@@ -14,9 +14,10 @@ import {
 } from "react-router-dom";
 import firebase from "./firebase.js";
 
-import Authentication from "./Components/Authentication";
-import Header from "./Components/Header";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import Authentication from './Components/Authentication';
+import Header from './Components/Header';
+import Footer from './Components/Footer';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 import ReactGA from "react-ga";
 ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || "");
@@ -104,43 +105,29 @@ class App extends Component<any, State> {
               photoURL={photoURL}
             />
           )}
-          {!loading && (
-            <Router>
+          <div style={{ minHeight: 'calc(100vh - 180px)' }}>
+            {!loading && <Router>
               <Switch>
-                <Route
-                  key={uid || ""}
-                  path="/"
-                  exact
-                  render={props => {
-                    this.trackPageView();
-                    if (isSignedIn) {
-                      return <Places key={uid} {...props} />;
-                    } else {
-                      return <Home />;
-                    }
-                  }}
-                />
-                <Route
-                  path="/login"
-                  render={props => {
-                    this.trackPageView();
-                    return <Authentication {...props} />;
-                  }}
-                />
-                <Route
-                  path="/places"
-                  render={props => {
-                    this.trackPageView();
-                    return <Places {...props} />;
-                  }}
-                />
-                <Route
-                  path="/sensors"
-                  render={props => {
-                    this.trackPageView();
-                    return <Sensors {...props} />;
-                  }}
-                />
+                <Route key={uid || ''} path="/" exact render={(props) => {
+                  this.trackPageView();
+                  if (isSignedIn) {
+                    return <Places key={uid} {...props} />
+                  } else {
+                    return <Home />
+                  }
+                }} />
+                <Route path="/login" render={(props) => {
+                  this.trackPageView();
+                  return <Authentication {...props} />
+                }} />
+                <Route path="/places" render={(props) => {
+                  this.trackPageView();
+                  return <Places {...props} />
+                }} />
+                <Route path="/sensors" render={(props) => {
+                  this.trackPageView();
+                  return <Sensors {...props} />
+                }} />
                 <Route
                   exact
                   path="/:sensorId"
@@ -154,10 +141,11 @@ class App extends Component<any, State> {
                   }}
                 />
               </Switch>
-            </Router>
-          )}
+            </Router>}
+          </div>
+          <Footer />
         </MuiThemeProvider>
-      </React.Fragment>
+      </React.Fragment >
     );
   }
 }

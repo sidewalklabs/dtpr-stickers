@@ -7,9 +7,6 @@ import {
   withStyles,
   WithStyles
 } from "@material-ui/core/styles";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -19,7 +16,6 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import BackIcon from "@material-ui/icons/ArrowBack";
 import CloseIcon from "@material-ui/icons/Close";
 
 import { AirtableData, getAirtableData } from "../../utils/airtable";
@@ -77,7 +73,7 @@ class SensorForm extends React.Component<Props, State> {
         .then(sensorImagePreviewSrc => {
           this.setState({ sensorImagePreviewSrc });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     }
@@ -90,7 +86,7 @@ class SensorForm extends React.Component<Props, State> {
         .then(logoPreviewSrc => {
           this.setState({ logoPreviewSrc });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     }
@@ -522,7 +518,6 @@ class SensorForm extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    const steps = this.getSteps();
     const { activeStep } = this.state;
     return (
       <div className={classes.root}>
