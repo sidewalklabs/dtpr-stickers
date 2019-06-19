@@ -185,7 +185,7 @@ class SensorView extends Component<any, State> {
               .then(sensorImageSrc => {
                 this.setState({ sensorImageSrc });
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 console.log(error);
               });
           }
@@ -198,7 +198,7 @@ class SensorView extends Component<any, State> {
               .then(logoSrc => {
                 this.setState({ logoSrc });
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 console.log(error);
               });
           }
@@ -281,7 +281,7 @@ class SensorView extends Component<any, State> {
         (accountable && airtableData.accountable[0]) || undefined;
     }
 
-    const hasfooter = phone || chat || email || onsiteStaff;
+    // const hasfooter = phone || chat || email || onsiteStaff;
     return (
       <div className={classes.root}>
         <Toolbar className={classes.toolbar}>
@@ -481,7 +481,11 @@ class SensorView extends Component<any, State> {
               })}
           </div>
         )}
-        <FeedbackFooter placeName={this.state.parentPlaceName} />
+        <FeedbackFooter
+          placeName={this.state.parentPlaceName}
+          technology={sensorData.name}
+          email={email || 'dtpr-hello@sidewalklabs.com'}
+        />
         {/* {hasfooter && (
           <div className={classes.footer}>
             <Typography gutterBottom variant="h6">

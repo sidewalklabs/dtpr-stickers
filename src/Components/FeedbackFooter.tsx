@@ -1,6 +1,4 @@
-import firebase from "../firebase.js";
 import React, { Component } from "react";
-import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import {
   createStyles,
@@ -8,15 +6,16 @@ import {
   withStyles,
   WithStyles
 } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
 import SendIcon from "@material-ui/icons/Send";
+
+import ReactGA from "react-ga";
+ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || "");
 
 interface Props extends WithStyles<typeof styles> {
   placeName?: string;
+  technology: string;
+  email: string;
 }
 
 const styles = (theme: Theme) =>
@@ -116,30 +115,18 @@ const styles = (theme: Theme) =>
     }
   });
 
-// const NegativeButton = withStyles((theme: Theme) => ({
-//   root: {
-//     backgroundColor: "#F5CCDD",
-//     border: "1px solid #F5CCDD",
-//     "&:hover": {
-//       backgroundColor: "#F5CCDD"
-//     }
-//   }
-// }))(Button);
-
 class FeedbackFooter extends Component<Props, any> {
   mailtoFeedback(subject: string) {
-    var FeedbackSubject =
-      "Some " + subject + " feedback for you about " + this.props.placeName;
-    var FeedbackBody =
-      "Hello, \nI'd like to share my thoughts on " +
-      window.document.title +
-      "...";
-    // TODO: Make this email address based on account owner
-    const mailUrl =
-      "mailto:dtpr-hello@sidewalklabs.com?subject=" +
-      FeedbackSubject +
-      "&body=" +
-      FeedbackBody;
+    const { placeName, email, technology } = this.props
+    const feedbackSubject = `Some ${subject} feedback for you about ${placeName}`
+    const feedbackBody = `Hello, \n I'd like to share my thoughts on ${technology} ...`
+    const mailUrl = `mailto:${email}?subject=${feedbackSubject}&body=${feedbackBody}`
+
+    ReactGA.event({
+      category: 'User',
+      action: `Clicked Feedback: ${subject}`,
+      label: technology
+    });
     window.location.href = mailUrl;
   }
   render() {
