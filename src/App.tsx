@@ -75,7 +75,6 @@ class App extends Component<any, State> {
   }
 
   trackPageView() {
-    console.log("page view:", window.location.pathname, window.location.search);
     ReactGA.pageview(window.location.pathname + window.location.search);
   }
 

@@ -44,7 +44,10 @@ class Home extends Component<any, any> {
         <Typography paragraph>The taxonomy is the full set of definitions on which the icons are based. These definitions are also used in the prototype of the digital channel. The initial draft of the taxonomy and the associated icons are managed in an Airtable, which you can see <a href='https://airtable.com/shrsW7o7ji3VjsZSz' target="_blank">here</a>.</Typography>
 
         <Typography gutterBottom variant="h6">Prototype for the Digital Channel</Typography>
-        <Typography paragraph>When you scan a QR code on a sign, it brings you to a webpage where you get more information. It’s currently set up for 307, Sidewalk Labs’ Toronto office and experimental workspace.</Typography>
+        <Typography paragraph>When you scan a QR code on a sign, it brings you to a dedicated page on this website where you can get more information. It’s currently set up for 307, Sidewalk Labs’ Toronto office and experimental workspace.</Typography>
+
+        <Typography gutterBottom variant="h6">Privacy</Typography>
+        <Typography paragraph>The DTPR website abides by the Sidewalk Labs privacy policy available <a href='https://github.com/sidewalklabs/docs/blob/master/privacy-policy.md' target="_blank">here</a>.</Typography>
 
         <Typography gutterBottom variant="h6">Co-Design Kit</Typography>
         <Typography paragraph>In the course of developing the initial prototypes, we developed materials and a facilitation guide that was used to run our co-design sessions. All the materials are provided <a href='https://github.com/sidewalklabs/dtpr/tree/master/dtpr_codesignkit' target="_blank">here</a> so that anyone, anywhere, can take up these tools and use them to engage in this crucial topic.</Typography>
@@ -57,6 +60,7 @@ class Home extends Component<any, any> {
 Portions of the <span style={{ fontStyle: 'italic' }}>DTPR Icons</span> incorporate elements of, or are derived from, the <a href='https://material.io/tools/icons/' target="_blank">Material icons</a>. The Material icons are available under the <a href='https://www.apache.org/licenses/LICENSE-2.0.html' target="_blank">Apache License 2.0</a>.
           The source code for the *Digital Channel Prototype* is licensed under <a href='https://www.apache.org/licenses/LICENSE-2.0.html' target="_blank">Apache License 2.0</a>.
 Sidewalk Labs trademarks and other brand features within these works are not included in this license.</Typography>
+
       </div>
     );
   }
