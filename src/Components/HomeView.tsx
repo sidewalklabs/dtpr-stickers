@@ -58,7 +58,7 @@ class Home extends Component<any, any> {
         <Typography gutterBottom variant="h6">License</Typography>
         <Typography paragraph>The <span style={{ fontStyle: 'italic' }}>Icons</span>, <span style={{ fontStyle: 'italic' }}>Design Guide</span>and <span style={{ fontStyle: 'italic' }}>Taxonomy</span> for DTPR are licensed by the Digital Transparency in the Public Realm contributors under the <a href='https://creativecommons.org/licenses/by/4.0/' target="_blank">Creative Commons Attribution 4.0 International (CC BY 4.0)</a>.
 Portions of the <span style={{ fontStyle: 'italic' }}>DTPR Icons</span> incorporate elements of, or are derived from, the <a href='https://material.io/tools/icons/' target="_blank">Material icons</a>. The Material icons are available under the <a href='https://www.apache.org/licenses/LICENSE-2.0.html' target="_blank">Apache License 2.0</a>.
-          The source code for the *Digital Channel Prototype* is licensed under <a href='https://www.apache.org/licenses/LICENSE-2.0.html' target="_blank">Apache License 2.0</a>.
+          The source code for the <span style={{ fontStyle: 'italic' }}>Digital Channel Prototype</span> is licensed under <a href='https://www.apache.org/licenses/LICENSE-2.0.html' target="_blank">Apache License 2.0</a>.
 Sidewalk Labs trademarks and other brand features within these works are not included in this license.</Typography>
 
       </div>
