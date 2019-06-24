@@ -29,6 +29,7 @@ class Authentication extends Component<any, any> {
 
     return (
       <div>
+        <a href="mailto:someone@yoursite.com">dtpr-hello@sidewalklabs.com</a> 
         <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebaseAuth} />
       </div>
     );

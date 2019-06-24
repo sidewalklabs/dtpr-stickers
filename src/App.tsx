@@ -3,7 +3,7 @@ import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import blue from "@material-ui/core/colors/blue";
 import pink from "@material-ui/core/colors/pink";
 import common from "@material-ui/core/colors/common";
-import Home from "./Components/Home";
+import HomeView from "./Components/HomeView";
 import Places from "./Components/Places";
 import Sensors from "./Components/Sensors";
 import {
@@ -21,8 +21,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import ReactGA from "react-ga";
 ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || "");
-
-const HEADERED_PATHS = ["/", "/login"];
 
 const theme = createMuiTheme({
   palette: {
@@ -90,8 +88,7 @@ class App extends Component<any, State> {
       displayName,
       photoURL
     } = this.state;
-    const showHeader =
-      isSignedIn || HEADERED_PATHS.includes(window.location.pathname);
+    const showHeader = isSignedIn;
     return (
       <React.Fragment>
         <MuiThemeProvider theme={theme}>
@@ -113,7 +110,7 @@ class App extends Component<any, State> {
                   if (isSignedIn) {
                     return <Places key={uid} {...props} />
                   } else {
-                    return <Home />
+                    return <HomeView />
                   }
                 }} />
                 <Route path="/login" render={(props) => {
