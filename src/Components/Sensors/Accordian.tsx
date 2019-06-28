@@ -7,9 +7,13 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import showdown from "showdown";
 
+import ReactGA from "react-ga";
+ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || "");
+ReactGA.set({ anonymizeIp: true });
+
 const paragraphTagFilter = {
   type: "output",
-  filter: function(text: string, converter: any) {
+  filter: function (text: string, converter: any) {
     var re = /<\/?p[^>]*>/gi;
     text = text.replace(re, "");
     return text;
@@ -108,6 +112,12 @@ class SensorView extends Component<Props, any> {
         classes={{
           root: classes.expansionPanelRoot,
           expanded: classes.expansionPanelExpanded
+        }}
+        onChange={(event, expanded) => {
+          ReactGA.event({
+            category: 'User',
+            action: `Tapped Accordian: ${expanded}`,
+          });
         }}
       >
         <ExpansionPanelSummary

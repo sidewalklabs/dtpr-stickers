@@ -11,6 +11,7 @@ import SendIcon from "@material-ui/icons/Send";
 
 import ReactGA from "react-ga";
 ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || "");
+ReactGA.set({ anonymizeIp: true });
 
 interface Props extends WithStyles<typeof styles> {
   placeName?: string;

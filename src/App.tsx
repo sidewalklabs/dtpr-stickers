@@ -21,6 +21,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import ReactGA from "react-ga";
 ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || "");
+ReactGA.set({ anonymizeIp: true });
 
 const theme = createMuiTheme({
   palette: {
