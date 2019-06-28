@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
+// import Pdf from 'process.env.PUBLIC_URL/DTPR_terms.pdf';
+
+
 const styles = (theme: Theme) => createStyles({
   root: {
     flexGrow: 1,
@@ -46,8 +49,11 @@ class Home extends Component<any, any> {
         <Typography gutterBottom variant="h6">Prototype for the Digital Channel</Typography>
         <Typography paragraph>When you scan a QR code on a sign, it brings you to a dedicated page on this website where you can get more information. It’s currently set up for 307, Sidewalk Labs’ Toronto office and experimental workspace.</Typography>
 
-        <Typography gutterBottom variant="h6">Privacy</Typography>
-        <Typography paragraph>The DTPR website abides by the Sidewalk Labs privacy policy available <a href='https://github.com/sidewalklabs/docs/blob/master/privacy-policy.md' target="_blank">here</a>.</Typography>
+        <Typography gutterBottom variant="subtitle1" style={{ fontWeight: 'bold' }}>Digital Channel Privacy and Terms</Typography>
+        <Typography paragraph>
+          The DTPR website abides by the Sidewalk Labs privacy policy available <a href='https://github.com/sidewalklabs/docs/blob/master/privacy-policy.md' target="_blank">here</a>.
+          Terms of Use can be found <a href={`${process.env.PUBLIC_URL}/DTPR_terms.pdf`} target="_blank">here</a>.
+        </Typography>
 
         <Typography gutterBottom variant="h6">Co-Design Kit</Typography>
         <Typography paragraph>In the course of developing the initial prototypes, we developed materials and a facilitation guide that was used to run our co-design sessions. All the materials are provided <a href='https://github.com/sidewalklabs/dtpr/tree/master/dtpr_codesignkit' target="_blank">here</a> so that anyone, anywhere, can take up these tools and use them to engage in this crucial topic.</Typography>
