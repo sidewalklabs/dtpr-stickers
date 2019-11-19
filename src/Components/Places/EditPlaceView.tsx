@@ -18,13 +18,13 @@ class EditPlaceView extends React.Component<any, EditPlaceViewState> {
   constructor(props: any) {
     super(props);
 
-    const defaultLngLat: LngLat = new LngLat(-79.361752, 43.647265);
     this.state = {
       isLoading: true,
       allowAccess: true,
+      address: '',
       placeId: '',
       name: '',
-      lngLat: defaultLngLat,
+      lngLat: new LngLat(0, 0),
       sensors: {},
       admins: {}
     };
@@ -38,11 +38,11 @@ class EditPlaceView extends React.Component<any, EditPlaceViewState> {
       placeRef.on('value', (snapshot) => {
         if (snapshot) {
           const item = snapshot.val();
-          const { name, lngLat, sensors = {}, admins } = item
+          const { name, address, lngLat, sensors = {}, admins } = item
           if (!admins || !admins[user.uid]) {
             this.setState({ isLoading: false, allowAccess: false })
           }
-          this.setState({ placeId, name, lngLat, sensors: sensors, isLoading: false });
+          this.setState({ placeId, address, name, lngLat, sensors: sensors, isLoading: false });
         } else {
           this.setState({ isLoading: false });
         }

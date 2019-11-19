@@ -10,6 +10,7 @@ import { LngLat } from 'mapbox-gl';
 export interface PlaceData {
   name: string,
   lngLat: LngLat,
+  address: string, // mapbox place_name
   sensors: { [sensorId: string]: boolean }
   admins: { [uid: string]: boolean },
 }

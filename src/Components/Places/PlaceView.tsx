@@ -184,7 +184,7 @@ class PlaceView extends Component<any, PlaceViewState> {
       </Grid>
     }
 
-    const { name, lngLat = {} } = place;
+    const { name, lngLat = {}, address = '' } = place;
     const markerLocation = lngLat
       ? (Object.values(lngLat).reverse() as [number, number])
       : undefined;
@@ -204,8 +204,7 @@ class PlaceView extends Component<any, PlaceViewState> {
             )}
           </Typography>
           <Typography className={classes.subtitle}>
-            {/* TODO: add address field to places */}
-            307 Lakeshore Blvd. E, Toronto ON
+            {address}
           </Typography>
         </div>
         {markerLocation && (

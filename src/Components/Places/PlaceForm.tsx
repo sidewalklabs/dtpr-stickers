@@ -21,6 +21,7 @@ class PlaceForm extends React.Component<PlaceFormProps, PlaceData> {
 
     this.state = {
       name: props.name,
+      address: props.address,
       lngLat: props.lngLat,
       sensors: props.sensors,
       admins: props.admins,
@@ -32,8 +33,8 @@ class PlaceForm extends React.Component<PlaceFormProps, PlaceData> {
     const { id } = this.props
     if (id && user) {
       const { uid } = user
-      const { name, lngLat, sensors, admins } = this.state
-      const newPlaceData: PlaceData = { name, lngLat, sensors, admins: { ...admins, [uid]: true } }
+      const { name, address, lngLat, sensors, admins } = this.state
+      const newPlaceData: PlaceData = { name, address, lngLat, sensors, admins: { ...admins, [uid]: true } }
       const updates: { [key: string]: any } = {};
       updates['/places/' + id] = newPlaceData;
       updates[`users/${uid}/places/${id}`] = true;
@@ -51,7 +52,8 @@ class PlaceForm extends React.Component<PlaceFormProps, PlaceData> {
 
   render() {
     const { classes, title } = this.props
-    const { name, lngLat } = this.state
+    const { name, lngLat, address } = this.state
+    const markerLocation = lngLat ? Object.values(lngLat) as [number, number] : undefined
     return (
       <div className={classes.root}>
         <Typography gutterBottom variant="h5" component="h2">{title}</Typography>
@@ -63,11 +65,11 @@ class PlaceForm extends React.Component<PlaceFormProps, PlaceData> {
         />
         <div className={classes.locationPicker}>
           <LocationPicker
-            onSelectLocation={(lngLat: MapboxGL.LngLat) => this.setState({ lngLat })}
-            markerLocation={Object.values(lngLat) as [number, number]}
+            onSelectLocation={(lngLat: MapboxGL.LngLat, address: string) => this.setState({ lngLat, address })}
+            markerLocation={markerLocation}
           />
         </div>
-        <Button onClick={() => this.handleSubmit()}>Save</Button>
+        <Button disabled={!name || !lngLat || !address} onClick={() => this.handleSubmit()}>Save</Button>
       </div>
     );
   }

@@ -6,12 +6,10 @@ import { LngLat } from 'mapbox-gl';
 
 class CreatePlaceView extends React.Component<any, any> {
   render() {
-    const defaultLngLat: LngLat = new LngLat(-79.361752, 43.647265);
     return <PlaceForm
       id={shortid.generate()}
       title={"Create a New Place"}
       name={''}
-      lngLat={defaultLngLat}
       uid={this.props.uid}
       sensors={{}}
       admins={{}}
