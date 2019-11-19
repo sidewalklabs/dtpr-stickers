@@ -16,7 +16,6 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import CloseIcon from "@material-ui/icons/Close";
 
 import { AirtableData, getAirtableData } from "../../utils/airtable";
 
@@ -24,7 +23,6 @@ import { SensorData } from "./index";
 
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import firebase from "../../firebase.js";
-import { Fab, AppBar, Toolbar, IconButton } from "@material-ui/core";
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   sensorId: string;
@@ -33,7 +31,6 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
 
 interface State {
   sensorId: string;
-  activeStep: number;
   sensorData: SensorData;
   airtableData?: AirtableData;
   logo?: File;
@@ -46,10 +43,10 @@ interface State {
 
 class SensorForm extends React.Component<Props, State> {
   logoFileUpload: any = undefined;
+  sensorFileUpload: any = undefined
   constructor(props: any) {
     super(props);
     this.state = {
-      activeStep: 0,
       logoPreviewSrc: undefined,
       sensorImagePreviewSrc: undefined,
       sensorId: props.sensorId,
@@ -92,398 +89,6 @@ class SensorForm extends React.Component<Props, State> {
     }
   }
 
-  getSteps() {
-    return ["The Basics", "Data Use", "Contact Details", "Extras"];
-  }
-
-  getStepContent(step: number) {
-    const { airtableData, sensorId } = this.state;
-    if (!airtableData) {
-      return null;
-    }
-    const {
-      techType,
-      purpose,
-      dataType,
-      dataProcess,
-      access,
-      storage
-    } = airtableData;
-
-    return (
-      <div>
-        <AppBar position="fixed">
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="Menu"
-              style={{ marginLeft: "-16px" }}
-              onClick={event => this.props.history.push(`/sensors/${sensorId}`)}
-            >
-              <CloseIcon />
-            </IconButton>
-            <Typography
-              variant="h6"
-              style={{
-                flexGrow: 1,
-                fontSize: "20px",
-                lineHeight: "56px",
-                color: "#FFF"
-              }}
-            >
-              Edit Sensor
-            </Typography>
-            <Button color="inherit">Login</Button>
-          </Toolbar>
-        </AppBar>
-
-        <div>
-          <TextField
-            className={this.props.classes.formField}
-            label="Organization Name"
-            value={this.state.sensorData.accountable}
-            onChange={e => {
-              this.handleSensorDataChange("accountable", e.target.value);
-            }}
-          />
-        </div>
-        <div>
-          <TextField
-            className={this.props.classes.formField}
-            label="Organization Description"
-            value={this.state.sensorData.accountableDescription}
-            onChange={e => {
-              this.handleSensorDataChange(
-                "accountableDescription",
-                e.target.value
-              );
-            }}
-          />
-        </div>
-        <div>
-          <FormControl className={this.props.classes.formField}>
-            <InputLabel htmlFor="select-multiple">Purpose</InputLabel>
-            <Select
-              multiple
-              value={this.state.sensorData.purpose}
-              onChange={e => {
-                this.handleSensorDataChange("purpose", e.target.value);
-              }}
-              input={<Input id="select-multiple" />}
-            >
-              {purpose.map(option => (
-                <MenuItem key={option.name} value={option.name}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
-        <div>
-          <FormControl className={this.props.classes.formField}>
-            <InputLabel htmlFor="select-multiple">Data Type</InputLabel>
-            <Select
-              multiple
-              value={this.state.sensorData.dataType}
-              onChange={e => {
-                this.handleSensorDataChange("dataType", e.target.value);
-              }}
-              input={<Input id="select-multiple" />}
-            >
-              {dataType.map(option => (
-                <MenuItem key={option.name} value={option.name}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
-        {this.state.logoPreviewSrc &&
-          typeof this.state.logoPreviewSrc === "string" && (
-            <div>
-              <img
-                className={this.props.classes.imagePreview}
-                src={this.state.logoPreviewSrc}
-              />
-            </div>
-          )}
-        {this.state.logoUploadProgress <= 100 && (
-          <LinearProgress
-            className={this.props.classes.imagePreview}
-            variant="determinate"
-            value={this.state.logoUploadProgress}
-          />
-        )}
-        <div>
-          <input
-            accept="image/*"
-            onChange={e => {
-              const logo = this.logoFileUpload.files[0];
-              const fileExtension = logo.name.split(".").pop();
-              const logoRef = `images/${sensorId}/logo.${fileExtension}`;
-              const storageRef = firebase.storage().ref();
-              const uploadTask = storageRef.child(logoRef).put(logo);
-
-              uploadTask.on(
-                firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-                snapshot => {
-                  var logoUploadProgress =
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                  this.setState({ logoUploadProgress });
-                },
-                error => console.log(error),
-                () => {
-                  uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                    this.handleSensorDataChange("logoRef", logoRef);
-                    this.setState({
-                      logoPreviewSrc: downloadURL,
-                      logoUploadProgress: 101
-                    });
-                  });
-                }
-              );
-            }}
-            className={this.props.classes.input}
-            id="raised-button-file"
-            multiple
-            ref={ref => (this.logoFileUpload = ref)}
-            type="file"
-          />
-          <label htmlFor="raised-button-file">
-            <Button
-              component="span"
-              variant="contained"
-              className={this.props.classes.formField}
-            >
-              <CloudUploadIcon className={this.props.classes.leftIcon} />
-              Upload Organization Logo
-            </Button>
-          </label>
-        </div>
-
-        <div>
-          <FormControl className={this.props.classes.formField}>
-            <InputLabel htmlFor="select-multiple">Technology Type</InputLabel>
-            <Select
-              multiple
-              value={this.state.sensorData.techType}
-              onChange={e => {
-                this.handleSensorDataChange("techType", e.target.value);
-              }}
-              input={<Input id="select-multiple" />}
-            >
-              {techType.map(option => (
-                <MenuItem key={option.name} value={option.name}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
-        <div>
-          <FormControl className={this.props.classes.formField}>
-            <InputLabel htmlFor="select-multiple">Access</InputLabel>
-            <Select
-              multiple
-              value={this.state.sensorData.access}
-              onChange={e => {
-                this.handleSensorDataChange("access", e.target.value);
-              }}
-              input={<Input id="select-multiple" />}
-            >
-              {access.map(option => (
-                <MenuItem key={option.name} value={option.name}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
-        <div>
-          <FormControl className={this.props.classes.formField}>
-            <InputLabel htmlFor="select-multiple">Data Storage</InputLabel>
-            <Select
-              multiple
-              value={this.state.sensorData.storage}
-              onChange={e => {
-                this.handleSensorDataChange("storage", e.target.value);
-              }}
-              input={<Input id="select-multiple" />}
-            >
-              {storage.map(option => (
-                <MenuItem key={option.name} value={option.name}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
-        <div>
-          <FormControl className={this.props.classes.formField}>
-            <InputLabel htmlFor="select-multiple">Data Processing</InputLabel>
-            <Select
-              multiple
-              value={this.state.sensorData.dataProcess}
-              onChange={e => {
-                this.handleSensorDataChange("dataProcess", e.target.value);
-              }}
-              input={<Input id="select-multiple" />}
-            >
-              {dataProcess.map(option => (
-                <MenuItem key={option.name} value={option.name}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
-
-        <div>
-          <TextField
-            className={this.props.classes.formField}
-            label="email"
-            value={this.state.sensorData.email}
-            onChange={e => {
-              this.handleSensorDataChange("email", e.target.value);
-            }}
-          />
-        </div>
-        <div>
-          <TextField
-            className={this.props.classes.formField}
-            label="phone"
-            value={this.state.sensorData.phone}
-            onChange={e => {
-              this.handleSensorDataChange("phone", e.target.value);
-            }}
-          />
-        </div>
-        <div>
-          <TextField
-            className={this.props.classes.formField}
-            label="chat"
-            value={this.state.sensorData.chat}
-            onChange={e => {
-              this.handleSensorDataChange("chat", e.target.value);
-            }}
-          />
-        </div>
-
-        <div>
-          <TextField
-            className={this.props.classes.formField}
-            label="Sensor Name (will show on place page)"
-            value={this.state.sensorData.name}
-            onChange={e => {
-              this.handleSensorDataChange("name", e.target.value);
-            }}
-          />
-        </div>
-        <div>
-          <TextField
-            className={this.props.classes.formField}
-            label="Page Headline"
-            value={this.state.sensorData.headline}
-            onChange={e => {
-              this.handleSensorDataChange("headline", e.target.value);
-            }}
-          />
-        </div>
-        <div>
-          <TextField
-            className={this.props.classes.formField}
-            label="Page Description"
-            value={this.state.sensorData.description}
-            multiline
-            rowsMax="5"
-            onChange={e => {
-              this.handleSensorDataChange("description", e.target.value);
-            }}
-          />
-        </div>
-        {this.state.sensorImagePreviewSrc &&
-          typeof this.state.sensorImagePreviewSrc === "string" && (
-            <div>
-              <img
-                className={this.props.classes.imagePreview}
-                src={this.state.sensorImagePreviewSrc}
-              />
-            </div>
-          )}
-        {this.state.sensorImageUploadProgress <= 100 && (
-          <LinearProgress
-            className={this.props.classes.imagePreview}
-            variant="determinate"
-            value={this.state.sensorImageUploadProgress}
-          />
-        )}
-        <div>
-          <input
-            accept="image/*"
-            onChange={e => {
-              const sensorImage = this.logoFileUpload.files[0];
-              const fileExtension = sensorImage.name.split(".").pop();
-              const sensorImageRef = `images/${sensorId}/sensorImage.${fileExtension}`;
-              const storageRef = firebase.storage().ref();
-              const uploadTask = storageRef
-                .child(sensorImageRef)
-                .put(sensorImage);
-
-              uploadTask.on(
-                firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-                snapshot => {
-                  const sensorImageUploadProgress =
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                  this.setState({ sensorImageUploadProgress });
-                },
-                error => console.log(error),
-                () => {
-                  uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                    this.handleSensorDataChange(
-                      "sensorImageRef",
-                      sensorImageRef
-                    );
-                    this.setState({
-                      sensorImagePreviewSrc: downloadURL,
-                      sensorImageUploadProgress: 101
-                    });
-                  });
-                }
-              );
-            }}
-            className={this.props.classes.input}
-            id="raised-button-file"
-            multiple
-            ref={ref => (this.logoFileUpload = ref)}
-            type="file"
-          />
-          <label htmlFor="raised-button-file">
-            <Button
-              component="span"
-              variant="contained"
-              className={this.props.classes.formField}
-            >
-              <CloudUploadIcon className={this.props.classes.leftIcon} />
-              Upload Image
-            </Button>
-          </label>
-        </div>
-      </div>
-    );
-  }
-
-  handleNext = () => {
-    this.setState(state => ({
-      activeStep: state.activeStep + 1
-    }));
-  };
-
-  handleBack = () => {
-    this.setState(state => ({
-      activeStep: state.activeStep - 1
-    }));
-  };
-
   handleSensorDataChange(key: string, value: number | string) {
     this.setState(state => ({
       sensorData: { ...state.sensorData, [key]: value }
@@ -518,23 +123,370 @@ class SensorForm extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    const { activeStep } = this.state;
+    const { airtableData, sensorId } = this.state;
+    if (!airtableData) {
+      return null;
+    }
+    const {
+      techType,
+      purpose,
+      dataType,
+      dataProcess,
+      access,
+      storage
+    } = airtableData;
+
     return (
       <div className={classes.root}>
         <div className={classes.stepperContent}>
-          {this.getStepContent(activeStep)}
-          <div className={classes.actionsContainer}>
+          <div>
+            <Typography variant='h4' gutterBottom>Add Sensor Data</Typography>
             <div>
-              <Fab
-                color="primary"
-                variant="extended"
-                size="medium"
-                onClick={() => this.handleSubmit()}
-                className={classes.fabSave}
-              >
-                Save
-              </Fab>
+              <TextField
+                className={this.props.classes.formField}
+                label="Organization Name"
+                value={this.state.sensorData.accountable}
+                onChange={e => {
+                  this.handleSensorDataChange("accountable", e.target.value);
+                }}
+              />
             </div>
+            <div>
+              <TextField
+                className={this.props.classes.formField}
+                label="Organization Description"
+                value={this.state.sensorData.accountableDescription}
+                onChange={e => {
+                  this.handleSensorDataChange(
+                    "accountableDescription",
+                    e.target.value
+                  );
+                }}
+              />
+            </div>
+            <div>
+              <FormControl className={this.props.classes.formField}>
+                <InputLabel htmlFor="select-multiple">Purpose</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.sensorData.purpose}
+                  onChange={e => {
+                    this.handleSensorDataChange("purpose", e.target.value);
+                  }}
+                  input={<Input id="select-multiple" />}
+                >
+                  {purpose.map(option => (
+                    <MenuItem key={option.name} value={option.name}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <div>
+              <FormControl className={this.props.classes.formField}>
+                <InputLabel htmlFor="select-multiple">Data Type</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.sensorData.dataType}
+                  onChange={e => {
+                    this.handleSensorDataChange("dataType", e.target.value);
+                  }}
+                  input={<Input id="select-multiple" />}
+                >
+                  {dataType.map(option => (
+                    <MenuItem key={option.name} value={option.name}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            {this.state.logoPreviewSrc &&
+              typeof this.state.logoPreviewSrc === "string" && (
+                <div>
+                  <img
+                    className={this.props.classes.imagePreview}
+                    src={this.state.logoPreviewSrc}
+                  />
+                </div>
+              )}
+            {this.state.logoUploadProgress <= 100 && (
+              <LinearProgress
+                className={this.props.classes.imagePreview}
+                variant="determinate"
+                value={this.state.logoUploadProgress}
+              />
+            )}
+            <div>
+              <input
+                accept="image/*"
+                onChange={e => {
+                  const logo = this.logoFileUpload.files[0];
+                  if (logo) {
+                    const fileExtension = logo.name.split(".").pop();
+                    const logoRef = `images/${sensorId}/logo.${fileExtension}`;
+                    const storageRef = firebase.storage().ref();
+                    const uploadTask = storageRef.child(logoRef).put(logo);
+
+                    uploadTask.on(
+                      firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+                      snapshot => {
+                        var logoUploadProgress =
+                          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        this.setState({ logoUploadProgress });
+                      },
+                      error => console.log(error),
+                      () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                          this.handleSensorDataChange("logoRef", logoRef);
+                          this.setState({
+                            logoPreviewSrc: downloadURL,
+                            logoUploadProgress: 101
+                          });
+                        });
+                      }
+                    );
+                  }
+                }}
+                className={this.props.classes.input}
+                id="logo-file"
+                multiple
+                ref={ref => (this.logoFileUpload = ref)}
+                type="file"
+              />
+              <label htmlFor="logo-file">
+                <Button
+                  component="span"
+                  variant="contained"
+                  className={this.props.classes.formField}
+                >
+                  <CloudUploadIcon className={this.props.classes.leftIcon} />
+                  Upload Organization Logo
+            </Button>
+              </label>
+            </div>
+
+            <div>
+              <FormControl className={this.props.classes.formField}>
+                <InputLabel htmlFor="select-multiple">Technology Type</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.sensorData.techType}
+                  onChange={e => {
+                    this.handleSensorDataChange("techType", e.target.value);
+                  }}
+                  input={<Input id="select-multiple" />}
+                >
+                  {techType.map(option => (
+                    <MenuItem key={option.name} value={option.name}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <div>
+              <FormControl className={this.props.classes.formField}>
+                <InputLabel htmlFor="select-multiple">Access</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.sensorData.access}
+                  onChange={e => {
+                    this.handleSensorDataChange("access", e.target.value);
+                  }}
+                  input={<Input id="select-multiple" />}
+                >
+                  {access.map(option => (
+                    <MenuItem key={option.name} value={option.name}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <div>
+              <FormControl className={this.props.classes.formField}>
+                <InputLabel htmlFor="select-multiple">Data Storage</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.sensorData.storage}
+                  onChange={e => {
+                    this.handleSensorDataChange("storage", e.target.value);
+                  }}
+                  input={<Input id="select-multiple" />}
+                >
+                  {storage.map(option => (
+                    <MenuItem key={option.name} value={option.name}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <div>
+              <FormControl className={this.props.classes.formField}>
+                <InputLabel htmlFor="select-multiple">Data Processing</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.sensorData.dataProcess}
+                  onChange={e => {
+                    this.handleSensorDataChange("dataProcess", e.target.value);
+                  }}
+                  input={<Input id="select-multiple" />}
+                >
+                  {dataProcess.map(option => (
+                    <MenuItem key={option.name} value={option.name}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+
+            <div>
+              <TextField
+                className={this.props.classes.formField}
+                label="email"
+                value={this.state.sensorData.email}
+                onChange={e => {
+                  this.handleSensorDataChange("email", e.target.value);
+                }}
+              />
+            </div>
+            <div>
+              <TextField
+                className={this.props.classes.formField}
+                label="phone"
+                value={this.state.sensorData.phone}
+                onChange={e => {
+                  this.handleSensorDataChange("phone", e.target.value);
+                }}
+              />
+            </div>
+            <div>
+              <TextField
+                className={this.props.classes.formField}
+                label="chat"
+                value={this.state.sensorData.chat}
+                onChange={e => {
+                  this.handleSensorDataChange("chat", e.target.value);
+                }}
+              />
+            </div>
+
+            <div>
+              <TextField
+                className={this.props.classes.formField}
+                label="Sensor Name (will show on place page)"
+                value={this.state.sensorData.name}
+                onChange={e => {
+                  this.handleSensorDataChange("name", e.target.value);
+                }}
+              />
+            </div>
+            <div>
+              <TextField
+                className={this.props.classes.formField}
+                label="Page Headline"
+                value={this.state.sensorData.headline}
+                onChange={e => {
+                  this.handleSensorDataChange("headline", e.target.value);
+                }}
+              />
+            </div>
+            <div>
+              <TextField
+                className={this.props.classes.formField}
+                label="Page Description"
+                value={this.state.sensorData.description}
+                multiline
+                rowsMax="5"
+                onChange={e => {
+                  this.handleSensorDataChange("description", e.target.value);
+                }}
+              />
+            </div>
+            {this.state.sensorImagePreviewSrc &&
+              typeof this.state.sensorImagePreviewSrc === "string" && (
+                <div>
+                  <img
+                    className={this.props.classes.imagePreview}
+                    src={this.state.sensorImagePreviewSrc}
+                  />
+                </div>
+              )}
+            {this.state.sensorImageUploadProgress <= 100 && (
+              <LinearProgress
+                className={this.props.classes.imagePreview}
+                variant="determinate"
+                value={this.state.sensorImageUploadProgress}
+              />
+            )}
+            <div>
+              <input
+                accept="image/*"
+                onChange={e => {
+                  const sensorImage = this.sensorFileUpload.files[0];
+                  if (sensorImage) {
+                    const fileExtension = sensorImage.name.split(".").pop();
+                    const sensorImageRef = `images/${sensorId}/sensorImage.${fileExtension}`;
+                    const storageRef = firebase.storage().ref();
+                    const uploadTask = storageRef
+                      .child(sensorImageRef)
+                      .put(sensorImage);
+
+                    uploadTask.on(
+                      firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+                      snapshot => {
+                        const sensorImageUploadProgress =
+                          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+                        this.setState({ sensorImageUploadProgress });
+                      },
+                      error => console.log(error),
+                      () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                          this.handleSensorDataChange(
+                            "sensorImageRef",
+                            sensorImageRef
+                          );
+                          this.setState({
+                            sensorImagePreviewSrc: downloadURL,
+                            sensorImageUploadProgress: 101
+                          });
+                        });
+                      }
+                    );
+                  }
+                }}
+                className={this.props.classes.input}
+                id="sensor-file"
+                multiple
+                ref={ref => (this.sensorFileUpload = ref)}
+                type="file"
+              />
+              <label htmlFor="sensor-file">
+                <Button
+                  component="span"
+                  variant="contained"
+                  className={this.props.classes.formField}
+                >
+                  <CloudUploadIcon className={this.props.classes.leftIcon} />
+                  Upload Image
+               </Button>
+              </label>
+            </div>
+          </div>
+          <div>
+            <Button
+              color="primary"
+              variant="contained"
+              className={this.props.classes.formField}
+              onClick={() => this.handleSubmit()}
+            >
+              Save
+            </Button>
           </div>
         </div>
       </div>
