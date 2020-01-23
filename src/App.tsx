@@ -18,9 +18,11 @@ import Authentication from './Components/Authentication';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import CssBaseline from '@material-ui/core/CssBaseline';
-
 import ReactGA from "react-ga";
-ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || "");
+
+ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || '', {
+  testMode: process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development',
+});
 ReactGA.set({ anonymizeIp: true });
 
 const theme = createMuiTheme({
