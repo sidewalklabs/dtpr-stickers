@@ -4,6 +4,7 @@ src/.DS_Store
 # generated build directory
 build/*
 .env
+.env.*
 
 # Logs
 logs
