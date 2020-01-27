@@ -5,6 +5,8 @@ import pink from "@material-ui/core/colors/pink";
 import common from "@material-ui/core/colors/common";
 import HomeView from "./Components/HomeView";
 import Places from "./Components/Places";
+import SimpleMap from "./Components/Near/SimpleMap";
+import Near from "./Components/Near/NearView";
 import Sensors from "./Components/Sensors";
 import {
   BrowserRouter as Router,
@@ -19,6 +21,8 @@ import Header from './Components/Header';
 import Footer from './Components/Footer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import ReactGA from "react-ga";
+import NearView from "./Components/Near/NearView";
+
 
 ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY || '', {
   testMode: process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development',
@@ -104,7 +108,7 @@ class App extends Component<any, State> {
               photoURL={photoURL}
             />
           )}
-          <div style={{ minHeight: 'calc(100vh - 180px)' }}>
+          <div style={{ minHeight: 'calc(100vh - 180px)', height: 'calc(100vh - 180px)' }}>
             {!loading && <Router>
               <Switch>
                 <Route key={uid || ''} path="/" exact render={(props) => {
@@ -122,6 +126,14 @@ class App extends Component<any, State> {
                 <Route path="/places" render={(props) => {
                   this.trackPageView();
                   return <Places {...props} />
+                }} />
+                <Route path="/near" render={(props) => {
+                  this.trackPageView();
+                  return <NearView {...props} />
+                }} />
+                <Route path="/simple" render={(props) => {
+                  this.trackPageView();
+                  return <SimpleMap {...props} />
                 }} />
                 <Route path="/sensors" render={(props) => {
                   this.trackPageView();
