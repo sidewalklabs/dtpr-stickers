@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import MapGL, {Popup, NavigationControl, FullscreenControl, ScaleControl} from 'react-map-gl';
 
-import ControlPanel from './control-panel';
+// import ControlPanel from './control-panel';
 import Pins from './pins';
 import CityInfo from './city-info';
 
@@ -45,15 +45,15 @@ class NearView extends Component {
     };
   }
 
-  _updateViewport = viewport => {
+  updateViewport = viewport => {
     this.setState({viewport});
   };
 
-  _onClickMarker = city => {
+  onClickMarker = city => {
     this.setState({popupInfo: city});
   };
 
-  _renderPopup() {
+  renderPopup() {
     const {popupInfo} = this.state;
 
     return (
@@ -73,8 +73,6 @@ class NearView extends Component {
   }
 
   render() {
-    console.log('===========> @NearView render()...');
-    console.log('===========> @NearView TOKEN: ', process.env.REACT_APP_MAPBOX_ACCESS_TOKEN);
     const {viewport} = this.state;
 
     return (
@@ -88,12 +86,12 @@ class NearView extends Component {
         {...viewport}
         width="100%"
         height="100%"
-        mapStyle="mapbox://styles/lope/cjws7757q0ase1cn2blgpu7hy"
-        onViewportChange={this._updateViewport}
+        mapStyle="mapbox://styles/mapbox/dark-v9"
+        onViewportChange={this.updateViewport}
       >
-        <Pins data={CITIES} onClick={this._onClickMarker} />
+        <Pins data={CITIES} onClick={this.onClickMarker} />
 
-        {this._renderPopup()}
+        {this.renderPopup()}
 
         <div style={fullscreenControlStyle}>
           <FullscreenControl />
@@ -105,14 +103,10 @@ class NearView extends Component {
           <ScaleControl />
         </div>
 
-        <ControlPanel containerComponent={this.props.containerComponent} />
+        {/* <ControlPanel containerComponent={this.props.containerComponent} /> */}
       </MapGL>
     );
   }
 }
 
 export default NearView;
-
-// export function renderToDom(container) {
-//   render(<App />, container);
-// }
