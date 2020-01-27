@@ -33,8 +33,8 @@ class NearView extends Component {
     super(props);
     this.state = {
       viewport: {
-        width: 800,
-        height: 800,
+        width: '100%',
+        height: '100%',
         latitude: 37.785164,
         longitude: -100,
         zoom: 3.5,
