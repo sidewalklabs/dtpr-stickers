@@ -72,35 +72,47 @@ class NearView extends Component {
     );
   }
 
+  getMapBoundaries = () => {
+    // Get map boundaries
+    const myMap = this.mapReference.getMap();
+    console.log(myMap.getBounds());
+    const mapBoundaries = myMap.getBounds();
+    this.setState({ mapBoundaries })
+  }
+
+  componentDidMount = () => {
+    console.log('============> mapBoundaries: ', this.mapReference.getMap());
+  }
+
   render() {
     const {viewport} = this.state;
 
     return (
       <MapGL
-        containerStyle={{
-          width: "100%",
-          height: "100%",
-          border: "1px solid rgba(0,0,0,0.12)",
-          borderRadius: "8px"
-        }}
+        containerStyle={mapContainerStyle}
         {...viewport}
         width="100%"
         height="100%"
         mapStyle="mapbox://styles/mapbox/dark-v9"
         onViewportChange={this.updateViewport}
+        ref={ref => this.mapReference = ref}
       >
         <Pins data={CITIES} onClick={this.onClickMarker} />
 
         {this.renderPopup()}
 
-        <div style={fullscreenControlStyle}>
-          <FullscreenControl />
-        </div>
         <div style={navStyle}>
           <NavigationControl />
         </div>
         <div style={scaleControlStyle}>
           <ScaleControl />
+        </div>
+        <div>
+        <GeolocateControl
+          style={geolocateStyle}
+          positionOptions={{enableHighAccuracy: true}}
+          trackUserLocation={true}
+        />
         </div>
 
         {/* <ControlPanel containerComponent={this.props.containerComponent} /> */}
