@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import MapGL, {Popup, NavigationControl, FullscreenControl, ScaleControl} from 'react-map-gl';
+import MapGL, {Popup, NavigationControl, FullscreenControl, ScaleControl, GeolocateControl} from 'react-map-gl';
 
 // import ControlPanel from './control-panel';
 import Pins from './pins';
@@ -28,13 +28,26 @@ const scaleControlStyle = {
   padding: '10px'
 };
 
+const mapContainerStyle = {
+  width: "100%",
+  height: "100%",
+  border: "1px solid rgba(0,0,0,0.12)",
+  borderRadius: "8px"
+};
+
+const geolocateStyle = {
+  position: 'absolute',
+  top: 10,
+  right: 10
+};
+
 class NearView extends Component {
   constructor(props) {
     super(props);
     this.state = {
       viewport: {
-        width: '100%',
-        height: '100%',
+        width: '100vw',
+        height: '100vh',
         latitude: 37.785164,
         longitude: -100,
         zoom: 3.5,
