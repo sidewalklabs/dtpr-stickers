@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
 import MapGL, {Popup, NavigationControl, ScaleControl, Marker} from 'react-map-gl';
 import UserIcon from '@material-ui/icons/Brightness1';
-
-// import ControlPanel from './control-panel';
 import Pins from './pins';
-import UserPins from './user-pin';
 import CityInfo from './city-info';
 
 import CITIES from './cities.json';
