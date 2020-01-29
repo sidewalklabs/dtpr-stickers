@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import MapGL, {Popup, NavigationControl, ScaleControl, Marker} from 'react-map-gl';
+import UserIcon from '@material-ui/icons/Brightness1';
 
 // import ControlPanel from './control-panel';
 import Pins from './pins';
+import UserPins from './user-pin';
 import CityInfo from './city-info';
 
 import CITIES from './cities.json';
@@ -41,6 +43,10 @@ const geolocateStyle = {
   right: 10
 };
 
+const userIconStyle = {
+  fill: 'green'
+};
+
 let userLocationWatch;
 
 class NearView extends Component {
@@ -56,7 +62,8 @@ class NearView extends Component {
         bearing: 0,
         pitch: 0
       },
-      popupInfo: null
+      popupInfo: null,
+      userLocation: null
     };
     this.updateUserLocation = this.updateUserLocation.bind(this);
   }
@@ -100,6 +107,11 @@ class NearView extends Component {
     const { latitude, longitude } = pos.coords;
     const { viewport } = this.state;
     console.log(`================> Update user location latitude: ${latitude} longitude: ${longitude}`);
+    const userLocation = {
+      latitude,
+      longitude
+    };
+    this.setState({ userLocation })
     this.updateViewport({
       ...viewport,
       longitude,
@@ -126,6 +138,7 @@ class NearView extends Component {
   render() {
     console.log('==============> render()');
     const {viewport} = this.state;
+    const {userLocation} = this.state;
     const center = [viewport.latitude, viewport.longitude];
     console.log('==============> viewport: ', viewport);
     return (
@@ -140,7 +153,10 @@ class NearView extends Component {
         center={center}
       >
         <Pins data={CITIES} onClick={this.onClickMarker} />
-
+        { userLocation && <Marker latitude={userLocation.latitude} longitude={userLocation.longitude} key='userLocation'>
+          <UserIcon style={userIconStyle}/>
+        </Marker>
+        }
         {this.renderPopup()}
 
         <div style={navStyle}>
