@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import MapGL, {Popup, NavigationControl, FullscreenControl, ScaleControl, GeolocateControl} from 'react-map-gl';
+import MapGL, {Popup, NavigationControl, ScaleControl, Marker} from 'react-map-gl';
 
 // import ControlPanel from './control-panel';
 import Pins from './pins';
@@ -149,14 +149,6 @@ class NearView extends Component {
         <div style={scaleControlStyle}>
           <ScaleControl />
         </div>
-        <div>
-        <GeolocateControl
-          /* style={geolocateStyle} */
-          /* positionOptions={{enableHighAccuracy: true}} */
-          trackUserLocation={true}
-        />
-        </div>
-
         {/* <ControlPanel containerComponent={this.props.containerComponent} /> */}
       </MapGL>
     );
