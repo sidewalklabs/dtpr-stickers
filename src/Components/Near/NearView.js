@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import MapGL, {Popup, NavigationControl, ScaleControl, Marker} from 'react-map-gl';
+import firebase from '../../firebase.js';
 import UserIcon from '@material-ui/icons/Brightness1';
 import Pins from './pins';
 import CityInfo from './city-info';
@@ -60,7 +61,8 @@ class NearView extends Component {
         pitch: 0
       },
       popupInfo: null,
-      userLocation: null
+      userLocation: null,
+      places: null
     };
     this.updateUserLocation = this.updateUserLocation.bind(this);
   }
@@ -126,6 +128,28 @@ class NearView extends Component {
       enableHighAccuracy: true,
       timeout: 10000,
       maximumAge: 0 });
+    const placesRef = firebase.database().ref(`places`);
+
+    placesRef.once("value", snapshot => {
+      if (snapshot) {
+        let places = Object.values(snapshot.val());
+        console.log(places);
+        // apply any starting filters
+        // adapt the data to this view
+        const adapted = places.map(place => {
+          return {
+            ...place,
+            longitude: place.lngLat.lng,
+            latitude: place.lngLat.lat,
+          }
+        });
+        if (adapted) {
+          this.setState({
+            places: adapted
+          });
+        }
+      }
+    }, console.log);
   }
 
   componentWillUnmount() {
@@ -134,10 +158,10 @@ class NearView extends Component {
 
   render() {
     console.log('==============> render()');
-    const {viewport} = this.state;
-    const {userLocation} = this.state;
+    const {viewport, userLocation, places} = this.state;
     const center = [viewport.latitude, viewport.longitude];
     console.log('==============> viewport: ', viewport);
+    console.log('==============> places: ', places);
     return (
       <MapGL
         containerStyle={mapContainerStyle}
@@ -149,7 +173,7 @@ class NearView extends Component {
         ref={ref => this.mapReference = ref}
         center={center}
       >
-        <Pins data={CITIES} onClick={this.onClickMarker} />
+        {places && <Pins data={places} onClick={this.onClickMarker} />}
         { userLocation && <Marker latitude={userLocation.latitude} longitude={userLocation.longitude} key='userLocation'>
           <UserIcon style={userIconStyle}/>
         </Marker>
