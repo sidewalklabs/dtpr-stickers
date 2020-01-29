@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import MapGL, {Popup, NavigationControl, ScaleControl, Marker} from 'react-map-gl';
 import firebase from '../../firebase.js';
 import UserIcon from '@material-ui/icons/Brightness1';
+import FormatBoldIcon from '@material-ui/icons/FormatBold';
 import Pins from './pins';
 import CityInfo from './city-info';
-
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import CITIES from './cities.json';
 
 const fullscreenControlStyle = {
@@ -35,14 +37,14 @@ const mapContainerStyle = {
   borderRadius: "8px"
 };
 
-const geolocateStyle = {
-  position: 'absolute',
-  top: 10,
-  right: 10
-};
-
 const userIconStyle = {
   fill: 'green'
+};
+
+const filterGroupStlye = {
+  position: 'absolute',
+  bottom: 36,
+  left: 0
 };
 
 let userLocationWatch;
@@ -62,7 +64,8 @@ class NearView extends Component {
       },
       popupInfo: null,
       userLocation: null,
-      places: null
+      places: null,
+      formats: ['cameras']
     };
     this.updateUserLocation = this.updateUserLocation.bind(this);
   }
@@ -118,6 +121,10 @@ class NearView extends Component {
     });
   };
 
+  handleFormat = (event, formats) => {
+    this.setState({formats});
+  };
+
   componentDidMount = () => {
     const { viewport } = this.state;
     this.updateViewport({
@@ -158,7 +165,7 @@ class NearView extends Component {
 
   render() {
     console.log('==============> render()');
-    const {viewport, userLocation, places} = this.state;
+    const {viewport, userLocation, places, formats} = this.state;
     const center = [viewport.latitude, viewport.longitude];
     console.log('==============> viewport: ', viewport);
     console.log('==============> places: ', places);
@@ -185,6 +192,46 @@ class NearView extends Component {
         </div>
         <div style={scaleControlStyle}>
           <ScaleControl />
+        </div>
+        <div>
+          <ToggleButtonGroup value={formats} onChange={this.handleFormat} aria-label="text formatting" style={filterGroupStlye}>
+            <ToggleButton value="cameras" aria-label="cameras">
+              Cameras
+            </ToggleButton>
+            <ToggleButton value="infrared" aria-label="infrared">
+              Infrared
+            </ToggleButton>
+            <ToggleButton value="audio" aria-label="audio">
+              Audio
+            </ToggleButton>
+            <ToggleButton value="doorbell" aria-label="doorbell">
+              Doorbell
+            </ToggleButton>
+            <ToggleButton value="cameras" aria-label="cameras">
+              Cameras
+            </ToggleButton>
+            <ToggleButton value="infrared" aria-label="infrared">
+              Infrared
+            </ToggleButton>
+            <ToggleButton value="audio" aria-label="audio">
+              Audio
+            </ToggleButton>
+            <ToggleButton value="doorbell" aria-label="doorbell">
+              Doorbell
+            </ToggleButton>
+            <ToggleButton value="cameras" aria-label="cameras">
+              Cameras
+            </ToggleButton>
+            <ToggleButton value="infrared" aria-label="infrared">
+              Infrared
+            </ToggleButton>
+            <ToggleButton value="audio" aria-label="audio">
+              Audio
+            </ToggleButton>
+            <ToggleButton value="doorbell" aria-label="doorbell">
+              Doorbell
+            </ToggleButton>
+          </ToggleButtonGroup>
         </div>
         {/* <ControlPanel containerComponent={this.props.containerComponent} /> */}
       </MapGL>
