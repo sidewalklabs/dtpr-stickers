@@ -41,6 +41,8 @@ const geolocateStyle = {
   right: 10
 };
 
+let userLocationWatch;
+
 class NearView extends Component {
   constructor(props) {
     super(props);
@@ -56,6 +58,7 @@ class NearView extends Component {
       },
       popupInfo: null
     };
+    this.updateUserLocation = this.updateUserLocation.bind(this);
   }
 
   updateViewport = viewport => {
@@ -93,13 +96,38 @@ class NearView extends Component {
     this.setState({ mapBoundaries })
   }
 
+  updateUserLocation(pos) {
+    const { latitude, longitude } = pos.coords;
+    const { viewport } = this.state;
+    console.log(`================> Update user location latitude: ${latitude} longitude: ${longitude}`);
+    this.updateViewport({
+      ...viewport,
+      longitude,
+      latitude
+    });
+  };
+
   componentDidMount = () => {
-    console.log('============> mapBoundaries: ', this.mapReference.getMap());
+    const { viewport } = this.state;
+    this.updateViewport({
+      ...viewport,
+      zoom: 18 // set default zoom level
+    });
+    userLocationWatch = navigator.geolocation.watchPosition(this.updateUserLocation, console.log, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0 });
+  }
+
+  componentWillUnmount() {
+    navigator.geolocation.clearWatch(userLocationWatch);
   }
 
   render() {
+    console.log('==============> render()');
     const {viewport} = this.state;
-
+    const center = [viewport.latitude, viewport.longitude];
+    console.log('==============> viewport: ', viewport);
     return (
       <MapGL
         containerStyle={mapContainerStyle}
@@ -109,6 +137,7 @@ class NearView extends Component {
         mapStyle="mapbox://styles/mapbox/dark-v9"
         onViewportChange={this.updateViewport}
         ref={ref => this.mapReference = ref}
+        center={center}
       >
         <Pins data={CITIES} onClick={this.onClickMarker} />
 
@@ -122,8 +151,8 @@ class NearView extends Component {
         </div>
         <div>
         <GeolocateControl
-          style={geolocateStyle}
-          positionOptions={{enableHighAccuracy: true}}
+          /* style={geolocateStyle} */
+          /* positionOptions={{enableHighAccuracy: true}} */
           trackUserLocation={true}
         />
         </div>
