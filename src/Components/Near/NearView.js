@@ -4,6 +4,7 @@ import firebase from '../../firebase.js';
 import UserIcon from '@material-ui/icons/Brightness1';
 import Pins from './pins';
 import CityInfo from './city-info';
+import { getAirtableData } from '../../utils/airtable'
 
 const navStyle = {
   position: 'absolute',
@@ -48,7 +49,8 @@ class NearView extends Component {
       popupInfo: null,
       userLocation: null,
       places: null,
-      sensors: null
+      sensors: null,
+      airtableData: null
     };
     this.updateUserLocation = this.updateUserLocation.bind(this);
   }
@@ -106,7 +108,7 @@ class NearView extends Component {
     this.setState({formats});
   };
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     const { viewport } = this.state;
     this.updateViewport({
       ...viewport,
@@ -152,6 +154,10 @@ class NearView extends Component {
         }
       }
     }, console.log);
+
+    // load airtable data last so screen can render and it feels faster
+    const airtableData = await getAirtableData();
+    this.setState({ airtableData });
   }
 
   componentWillUnmount() {
@@ -159,7 +165,7 @@ class NearView extends Component {
   }
 
   render() {
-    const {viewport, userLocation, places, sensors} = this.state;
+    const {viewport, userLocation, places, sensors, airtableData} = this.state;
     const center = [viewport.latitude, viewport.longitude];
     console.log(`==========> sensors:`, sensors);
     return (
@@ -173,7 +179,7 @@ class NearView extends Component {
         ref={ref => this.mapReference = ref}
         center={center}
       >
-        {sensors && <Pins data={sensors} onClick={this.onClickMarker} />}
+        {sensors && <Pins data={sensors} airtableData={airtableData} onClick={this.onClickMarker} classes={{}} iconShortName='tech/light'/>}
         { userLocation && <Marker latitude={userLocation.latitude} longitude={userLocation.longitude} key='userLocation'>
           <UserIcon style={userIconStyle}/>
         </Marker>
