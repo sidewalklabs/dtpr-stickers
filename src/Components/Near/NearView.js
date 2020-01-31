@@ -116,7 +116,7 @@ class NearView extends Component {
       enableHighAccuracy: true,
       timeout: 10000,
       maximumAge: 0 });
-    const placesRef = firebase.database().ref(`sensors`);
+    const placesRef = firebase.database().ref(`places`);
 
     placesRef.once("value", snapshot => {
       if (snapshot) {
