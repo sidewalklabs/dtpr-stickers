@@ -48,7 +48,7 @@ class NearView extends Component {
       popupInfo: null,
       userLocation: null,
       places: null,
-      formats: ['cameras']
+      sensors: null
     };
     this.updateUserLocation = this.updateUserLocation.bind(this);
   }
@@ -116,8 +116,8 @@ class NearView extends Component {
       enableHighAccuracy: true,
       timeout: 10000,
       maximumAge: 0 });
-    const placesRef = firebase.database().ref(`places`);
 
+    const placesRef = firebase.database().ref(`places`);
     placesRef.once("value", snapshot => {
       if (snapshot) {
         let places = Object.values(snapshot.val());
@@ -137,6 +137,21 @@ class NearView extends Component {
         }
       }
     }, console.log);
+
+    const sensorsRef = firebase.database().ref(`sensors`);
+    sensorsRef.once("value", snapshot => {
+      if (snapshot) {
+        let sensors = Object.values(snapshot.val());
+        // apply any starting filters
+        // adapt the data to this view
+        const adapted = sensors.filter(sensor => sensor.longitude && sensor.latitude);
+        if (adapted) {
+          this.setState({
+            sensors: adapted
+          });
+        }
+      }
+    }, console.log);
   }
 
   componentWillUnmount() {
@@ -144,8 +159,9 @@ class NearView extends Component {
   }
 
   render() {
-    const {viewport, userLocation, places} = this.state;
+    const {viewport, userLocation, places, sensors} = this.state;
     const center = [viewport.latitude, viewport.longitude];
+    console.log(`==========> sensors:`, sensors);
     return (
       <MapGL
         containerStyle={mapContainerStyle}
@@ -157,7 +173,7 @@ class NearView extends Component {
         ref={ref => this.mapReference = ref}
         center={center}
       >
-        {places && <Pins data={places} onClick={this.onClickMarker} />}
+        {sensors && <Pins data={sensors} onClick={this.onClickMarker} />}
         { userLocation && <Marker latitude={userLocation.latitude} longitude={userLocation.longitude} key='userLocation'>
           <UserIcon style={userIconStyle}/>
         </Marker>
