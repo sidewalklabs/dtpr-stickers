@@ -121,7 +121,6 @@ class NearView extends Component {
     placesRef.once("value", snapshot => {
       if (snapshot) {
         let places = Object.values(snapshot.val());
-        console.log(places);
         // apply any starting filters
         // adapt the data to this view
         const adapted = places.map(place => {
@@ -164,7 +163,6 @@ class NearView extends Component {
         </Marker>
         }
         {this.renderPopup()}
-
         <div style={navStyle}>
           <NavigationControl />
         </div>
