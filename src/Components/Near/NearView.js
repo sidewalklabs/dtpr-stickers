@@ -2,19 +2,8 @@ import React, {Component} from 'react';
 import MapGL, {Popup, NavigationControl, ScaleControl, Marker} from 'react-map-gl';
 import firebase from '../../firebase.js';
 import UserIcon from '@material-ui/icons/Brightness1';
-import FormatBoldIcon from '@material-ui/icons/FormatBold';
 import Pins from './pins';
 import CityInfo from './city-info';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import CITIES from './cities.json';
-
-const fullscreenControlStyle = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  padding: '10px'
-};
 
 const navStyle = {
   position: 'absolute',
@@ -39,12 +28,6 @@ const mapContainerStyle = {
 
 const userIconStyle = {
   fill: 'green'
-};
-
-const filterGroupStlye = {
-  position: 'absolute',
-  bottom: 36,
-  left: 0
 };
 
 let userLocationWatch;
@@ -100,7 +83,6 @@ class NearView extends Component {
   getMapBoundaries = () => {
     // Get map boundaries
     const myMap = this.mapReference.getMap();
-    console.log(myMap.getBounds());
     const mapBoundaries = myMap.getBounds();
     this.setState({ mapBoundaries })
   }
@@ -108,7 +90,6 @@ class NearView extends Component {
   updateUserLocation(pos) {
     const { latitude, longitude } = pos.coords;
     const { viewport } = this.state;
-    console.log(`================> Update user location latitude: ${latitude} longitude: ${longitude}`);
     const userLocation = {
       latitude,
       longitude
@@ -135,7 +116,7 @@ class NearView extends Component {
       enableHighAccuracy: true,
       timeout: 10000,
       maximumAge: 0 });
-    const placesRef = firebase.database().ref(`places`);
+    const placesRef = firebase.database().ref(`sensors`);
 
     placesRef.once("value", snapshot => {
       if (snapshot) {
@@ -164,11 +145,8 @@ class NearView extends Component {
   }
 
   render() {
-    console.log('==============> render()');
-    const {viewport, userLocation, places, formats} = this.state;
+    const {viewport, userLocation, places} = this.state;
     const center = [viewport.latitude, viewport.longitude];
-    console.log('==============> viewport: ', viewport);
-    console.log('==============> places: ', places);
     return (
       <MapGL
         containerStyle={mapContainerStyle}
@@ -193,47 +171,6 @@ class NearView extends Component {
         <div style={scaleControlStyle}>
           <ScaleControl />
         </div>
-        <div>
-          <ToggleButtonGroup value={formats} onChange={this.handleFormat} aria-label="text formatting" style={filterGroupStlye}>
-            <ToggleButton value="cameras" aria-label="cameras">
-              Cameras
-            </ToggleButton>
-            <ToggleButton value="infrared" aria-label="infrared">
-              Infrared
-            </ToggleButton>
-            <ToggleButton value="audio" aria-label="audio">
-              Audio
-            </ToggleButton>
-            <ToggleButton value="doorbell" aria-label="doorbell">
-              Doorbell
-            </ToggleButton>
-            <ToggleButton value="cameras" aria-label="cameras">
-              Cameras
-            </ToggleButton>
-            <ToggleButton value="infrared" aria-label="infrared">
-              Infrared
-            </ToggleButton>
-            <ToggleButton value="audio" aria-label="audio">
-              Audio
-            </ToggleButton>
-            <ToggleButton value="doorbell" aria-label="doorbell">
-              Doorbell
-            </ToggleButton>
-            <ToggleButton value="cameras" aria-label="cameras">
-              Cameras
-            </ToggleButton>
-            <ToggleButton value="infrared" aria-label="infrared">
-              Infrared
-            </ToggleButton>
-            <ToggleButton value="audio" aria-label="audio">
-              Audio
-            </ToggleButton>
-            <ToggleButton value="doorbell" aria-label="doorbell">
-              Doorbell
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </div>
-        {/* <ControlPanel containerComponent={this.props.containerComponent} /> */}
       </MapGL>
     );
   }
