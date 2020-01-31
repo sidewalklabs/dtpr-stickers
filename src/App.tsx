@@ -5,7 +5,6 @@ import pink from "@material-ui/core/colors/pink";
 import common from "@material-ui/core/colors/common";
 import HomeView from "./Components/HomeView";
 import Places from "./Components/Places";
-import SimpleMap from "./Components/Near/SimpleMap";
 import Near from "./Components/Near/NearView";
 import Sensors from "./Components/Sensors";
 import {
@@ -130,10 +129,6 @@ class App extends Component<any, State> {
                 <Route path="/near" render={(props) => {
                   this.trackPageView();
                   return <NearView {...props} />
-                }} />
-                <Route path="/simple" render={(props) => {
-                  this.trackPageView();
-                  return <SimpleMap {...props} />
                 }} />
                 <Route path="/sensors" render={(props) => {
                   this.trackPageView();
