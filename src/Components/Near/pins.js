@@ -1,33 +1,57 @@
 import React, {PureComponent} from 'react';
 import {Marker} from 'react-map-gl';
 
-const ICON = `M20.2,15.7L20.2,15.7c1.1-1.6,1.8-3.6,1.8-5.7c0-5.6-4.5-10-10-10S2,4.5,2,10c0,2,0.6,3.9,1.6,5.4c0,0.1,0.1,0.2,0.2,0.3
-  c0,0,0.1,0.1,0.1,0.2c0.2,0.3,0.4,0.6,0.7,0.9c2.6,3.1,7.4,7.6,7.4,7.6s4.8-4.5,7.4-7.5c0.2-0.3,0.5-0.6,0.7-0.9
-  C20.1,15.8,20.2,15.8,20.2,15.7z`;
-
-const SIZE = 20;
+const pin = '/images/map/pin.svg';
+const iconBgStyle = {
+  position: 'absolute',
+  top: 0,
+  left: 0
+};
+const iconStyle = {
+  position: 'absolute',
+  top: -4,
+  left: -5,
+  transform: 'scale(0.5)'
+};
 
 // Important for perf: the markers never change, avoid rerender when the map viewport changes
 export default class Pins extends PureComponent {
-  render() {
-    const {data, onClick} = this.props;
+  // _onMarkerDragEnd used only for fine tuning lngLats for addition to the DB
+  _onMarkerDragEnd = event => {
+    console.log('=============> Marker dragged:');
+    console.dir(event.lngLat);
+  };
 
-    return data.map((city, index) => (
-      <Marker key={`marker-${index}`} longitude={city.longitude} latitude={city.latitude}>
-        <svg
-          height={SIZE}
-          viewBox="0 0 24 24"
-          style={{
-            cursor: 'pointer',
-            fill: '#d00',
-            stroke: 'none',
-            transform: `translate(${-SIZE / 2}px,${-SIZE}px)`
-          }}
-          onClick={() => onClick(city)}
+  render() {
+    const {data, airtableData, onClick, classes} = this.props;
+
+    return data.map((sensor, index) => {
+      const { techType } = sensor;
+      const featuredTechType =
+              techType && techType.length ? techType[0] : undefined;
+      let icon;
+      let config;
+
+      if (techType && airtableData) {
+        config = airtableData.techType.find(
+          option => option.name === featuredTechType
+        );
+      }
+
+      if (config) icon = `/images/${config.iconShortname}.svg`;
+
+      return <div onClick={onClick} key={`marker-${index}`}>
+        <Marker
+          key={`marker-${index}`}
+          longitude={sensor.longitude}
+          latitude={sensor.latitude}
+          draggable={false}
+          onDragEnd={this._onMarkerDragEnd}
         >
-          <path d={ICON} />
-        </svg>
-      </Marker>
-    ));
+          <img className={classes.iconBackground} src={pin} style={iconBgStyle} alt={`${techType} icon background`}/>
+          <img className={classes.icon} src={icon} style={iconStyle} alt={`${techType} icon`}/>
+        </Marker>
+      </div>
+    });
   }
 }

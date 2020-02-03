@@ -1,5 +1,5 @@
-.DS_Store
-src/.DS_Store
+# ignore OSX generated system files
+**/.DS_Store
 
 # generated build directory
 build/*
