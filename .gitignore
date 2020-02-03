@@ -1,3 +1,4 @@
+# ignore OSX generated system files
 **/.DS_Store
 
 # generated build directory
