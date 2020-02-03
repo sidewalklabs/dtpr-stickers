@@ -3,6 +3,7 @@ import MapGL, {Popup, NavigationControl, ScaleControl, Marker} from 'react-map-g
 import firebase from '../../firebase.js';
 import UserIcon from '@material-ui/icons/Brightness1';
 import Pins from './pins';
+import TechTypeButton from './tech-type-button';
 import CityInfo from './city-info';
 import { getAirtableData } from '../../utils/airtable'
 
@@ -108,6 +109,11 @@ class NearView extends Component {
     this.setState({formats});
   };
 
+  techTypeButtonOnClick = (event, techType) => {
+    console.dir(event);
+    console.log(techType);
+  };
+
   componentDidMount = async () => {
     const { viewport } = this.state;
     this.updateViewport({
@@ -191,6 +197,8 @@ class NearView extends Component {
         <div style={scaleControlStyle}>
           <ScaleControl />
         </div>
+        {/* Example TechTypeButton */}
+        {/* <TechTypeButton techType='Microphone' airtableData={airtableData} onClick={this.techTypeButtonOnClick} /> */}
       </MapGL>
     );
   }
