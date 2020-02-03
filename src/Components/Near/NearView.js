@@ -197,6 +197,8 @@ class NearView extends Component {
         <div style={scaleControlStyle}>
           <ScaleControl />
         </div>
+        {/* Example TechTypeButton */}
+        {/* <TechTypeButton techType='Microphone' airtableData={airtableData} onClick={this.techTypeButtonOnClick} /> */}
       </MapGL>
     );
   }
