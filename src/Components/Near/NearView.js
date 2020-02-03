@@ -3,6 +3,7 @@ import MapGL, {Popup, NavigationControl, ScaleControl, Marker} from 'react-map-g
 import firebase from '../../firebase.js';
 import UserIcon from '@material-ui/icons/Brightness1';
 import Pins from './pins';
+import TechTypeButton from './tech-type-button';
 import CityInfo from './city-info';
 import { getAirtableData } from '../../utils/airtable'
 
@@ -106,6 +107,11 @@ class NearView extends Component {
 
   handleFormat = (event, formats) => {
     this.setState({formats});
+  };
+
+  techTypeButtonOnClick = (event, techType) => {
+    console.dir(event);
+    console.log(techType);
   };
 
   componentDidMount = async () => {
