@@ -45,11 +45,11 @@ export default class Pins extends PureComponent {
           key={`marker-${index}`}
           longitude={sensor.longitude}
           latitude={sensor.latitude}
-          draggable={false}
+          draggable={true}
           onDragEnd={this._onMarkerDragEnd}
         >
           <img className={classes.iconBackground} src={pin} style={iconBgStyle} alt={`${techType} icon background`}/>
-          <img className={classes.icon} src={icon} style={iconStyle} alt={`${techType} icon`}/>
+          {icon && <img className={classes.icon} src={icon} style={iconStyle} alt={`${techType} icon`}/>}
         </Marker>
       </div>
     });
