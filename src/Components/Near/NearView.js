@@ -29,7 +29,9 @@ const mapContainerStyle = {
 };
 
 const userIconStyle = {
-  fill: 'green'
+  fill: 'green',
+  opacity: 1,
+  transform: 'scale(0.5)'
 };
 
 let userLocationWatch;
@@ -43,15 +45,16 @@ class NearView extends Component {
         height: '100vh',
         latitude: 37.785164,
         longitude: -100,
-        zoom: 3.5,
+        zoom: 18,
         bearing: 0,
-        pitch: 0
+        pitch: 0,
       },
       popupInfo: null,
       userLocation: null,
       places: null,
       sensors: null,
-      airtableData: null
+      airtableData: null,
+      center: props.center && props.center.length === 2 ? props.center : null
     };
     this.updateUserLocation = this.updateUserLocation.bind(this);
   }
@@ -120,11 +123,15 @@ class NearView extends Component {
       ...viewport,
       zoom: 18 // set default zoom level
     });
-    userLocationWatch = navigator.geolocation.watchPosition(this.updateUserLocation, console.log, {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0 });
-
+    if (this.state.center) {
+      const coords = { latitude: this.state.center[0], longitude: this.state.center[1] };
+      this.updateUserLocation({ coords })
+    } else {
+      userLocationWatch = navigator.geolocation.watchPosition(this.updateUserLocation, console.log, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0 });
+    }
     const placesRef = firebase.database().ref(`places`);
     placesRef.once("value", snapshot => {
       if (snapshot) {
@@ -171,9 +178,8 @@ class NearView extends Component {
   }
 
   render() {
-    const {viewport, userLocation, places, sensors, airtableData} = this.state;
+    const {viewport, userLocation, sensors, airtableData} = this.state;
     const center = [viewport.latitude, viewport.longitude];
-    console.log(`==========> sensors:`, sensors);
     return (
       <MapGL
         containerStyle={mapContainerStyle}
