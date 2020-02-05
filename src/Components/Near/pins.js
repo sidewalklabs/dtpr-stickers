@@ -1,5 +1,6 @@
 import React, {PureComponent} from 'react';
 import {Marker} from 'react-map-gl';
+import technologyCategoryAdapater from './technology-category-adapter';
 
 const pin = '/images/map/pin.svg';
 const iconBgStyle = {
@@ -29,8 +30,10 @@ export default class Pins extends PureComponent {
       const { techType } = sensor;
       const featuredTechType =
               techType && techType.length ? techType[0] : undefined;
+      const techCategory = technologyCategoryAdapater.getCategory(techType, airtableData);
       let icon;
       let config;
+
 
       if (techType && airtableData) {
         config = airtableData.techType.find(
@@ -48,8 +51,8 @@ export default class Pins extends PureComponent {
           draggable={true}
           onDragEnd={this._onMarkerDragEnd}
         >
-          <img className={classes.iconBackground} src={pin} style={iconBgStyle} alt={`${techType} icon background`}/>
-          {icon && <img className={classes.icon} src={icon} style={iconStyle} alt={`${techType} icon`}/>}
+          <img className={classes.iconBackground} src={pin} style={iconBgStyle} alt={`${techCategory} icon background`}/>
+          {icon && <img className={classes.icon} src={icon} style={iconStyle} alt={`${techCategory} icon`}/>}
         </Marker>
       </div>
     });
