@@ -129,7 +129,7 @@ class App extends Component<any, State> {
                 <Route path="/near" render={(props) => {
                   this.trackPageView();
                   // pass in a default map center as a latLng - otherwise app will attempt to use users locale via geolocation api
-                  return <NearView /* center={[43.647300, -79.361700]} */ {...props} />
+                  return <NearView center={[43.647300, -79.361700]} {...props} />
                 }} />
                 <Route path="/sensors" render={(props) => {
                   this.trackPageView();

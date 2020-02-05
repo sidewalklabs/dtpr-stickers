@@ -3,8 +3,7 @@ import MapGL, {Popup, NavigationControl, ScaleControl, Marker} from 'react-map-g
 import firebase from '../../firebase.js';
 import UserIcon from '@material-ui/icons/Brightness1';
 import Pins from './pins';
-import TechTypeButton from './tech-type-button';
-import CityInfo from './city-info';
+import TechTypeButton from './tech-type-button'; // eslint-disable-line no-unused-vars
 import { getAirtableData } from '../../utils/airtable'
 
 const navStyle = {
@@ -68,22 +67,7 @@ class NearView extends Component {
   };
 
   renderPopup() {
-    const {popupInfo} = this.state;
-
-    return (
-      popupInfo && (
-        <Popup
-          tipSize={5}
-          anchor="top"
-          longitude={popupInfo.longitude}
-          latitude={popupInfo.latitude}
-          closeOnClick={false}
-          onClose={() => this.setState({popupInfo: null})}
-        >
-          <CityInfo info={popupInfo} />
-        </Popup>
-      )
-    );
+    return (<div></div>);
   }
 
   getMapBoundaries = () => {
