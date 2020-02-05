@@ -1,5 +1,6 @@
 import React, {PureComponent} from 'react';
 import Button from '@material-ui/core/Button';
+import technologyCategoryAdapater from './technology-category-adapter';
 
 const buttonStyle = {
  display: 'inline-block',
@@ -18,7 +19,7 @@ const buttonStyle = {
 
 const buttonTextStyle = {
   padding: '1em',
-  textTransform: 'none'
+  textTransform: 'capitalize'
 }
 
 const iconStyle = {
@@ -27,10 +28,14 @@ const iconStyle = {
 
 export default class TechTypeButton extends PureComponent {
   render() {
-    const {techType, airtableData, onClick} = this.props;
+    const {techType, airtableData, onClick, showCategory} = this.props;
+    let category;
     let icon;
     let name;
     let config;
+    if (showCategory) {
+      category = technologyCategoryAdapater.getCategory(techType, airtableData);
+    }
     if (techType && airtableData) {
       config = airtableData.techType.find(
         option => option.name === techType
@@ -40,6 +45,6 @@ export default class TechTypeButton extends PureComponent {
         name = config.name;
       }
     }
-  return (<Button onClick={event => onClick(event, techType)} style={buttonStyle}><img src={icon} style={iconStyle} alt={`${techType} icon`}/><span style={buttonTextStyle}>{name}</span></Button>);
+  return (<Button onClick={event => onClick(event, category, techType)} style={buttonStyle}><img src={icon} style={iconStyle} alt={`${techType} icon`}/><span style={buttonTextStyle}>{category || name}</span></Button>);
   }
 }
