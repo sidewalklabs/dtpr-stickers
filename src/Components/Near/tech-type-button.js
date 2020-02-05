@@ -45,6 +45,6 @@ export default class TechTypeButton extends PureComponent {
         name = config.name;
       }
     }
-  return (<Button onClick={event => onClick(event, techType)} style={buttonStyle}><img src={icon} style={iconStyle} alt={`${techType} icon`}/><span style={buttonTextStyle}>{category || name}</span></Button>);
+  return (<Button onClick={event => onClick(event, category, techType)} style={buttonStyle}><img src={icon} style={iconStyle} alt={`${techType} icon`}/><span style={buttonTextStyle}>{category || name}</span></Button>);
   }
 }

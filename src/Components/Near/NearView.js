@@ -96,9 +96,9 @@ class NearView extends Component {
     this.setState({formats});
   };
 
-  techTypeButtonOnClick = (event, techType) => {
+  techTypeButtonOnClick = (event, category, techType) => {
     console.dir(event);
-    console.log(techType);
+    console.log(`category: ${category} techType: ${techType}`);
   };
 
   componentDidMount = async () => {
